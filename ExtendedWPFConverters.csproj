@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.0;net471</TargetFrameworks>
     <PackageId>ExtendedWPFConverters</PackageId>
     <Title>Extended WPF converters</Title>
     <PackageDescription>Proposes a list of commonly used converters for WPF.</PackageDescription>
     <PackageTags>EMA;WPF;Converters</PackageTags>
     <UseWPF>true</UseWPF>
-    <Version>0.5.0</Version>
+    <Version>1.0.0</Version>
     <Authors>David Le Bourdais</Authors>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="InheritDoc" Version="2.3.0" />
+    <!-- <PackageReference Include="InheritDoc" Version="2.3.0" /> -->
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
   
