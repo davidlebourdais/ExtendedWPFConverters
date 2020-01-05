@@ -6,43 +6,41 @@ using System.Windows.Markup;
 namespace EMA.View.Converters
 {
     /// <summary>
-    /// Converts a boolean value into an opacity level.
+    /// Converts a boolean value into an <see cref="IComparable"/> value from a given targeted <see cref="NumberType"/>.
     /// </summary>
-    public class BooleanToOpacityConverter : MarkupExtension, IValueConverter
+    public class BooleanToNumberConverter : MarkupExtension, IValueConverter
     {
         /// <summary>
         /// Value to be applied when converted value is true.
         /// </summary>
-        public double DefaultOpacityForTrue { get; set; } = 0.4d;
+        public IComparable ValueForTrue { get; set; } = 0.4d;
 
         /// <summary>
         /// Value to be applied when converted value is false.
         /// </summary>
-        public double DefaultOpacityForFalse { get; set; } = 1.0d;
+        public IComparable ValueForFalse { get; set; } = 1.0d;
 
         /// <summary>
         /// Value to be applied when converted value is null or is not a boolean.
         /// </summary>
-        public double DefaultOpacityForInvalid { get; set; } = 1.0d;
+        public IComparable ValueForInvalid { get; set; } = 1.0d;
 
         /// <inheritdoc />
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // One can pass dynamic opacity value for "true" through parameter:
-            double reduced_opacity = parameter == null ? DefaultOpacityForTrue : System.Convert.ToDouble(parameter, CultureInfo.InvariantCulture);
+            // One can pass dynamic value for "true" through parameter:
+            var value_for_true = parameter ?? ValueForTrue;
 
             if (value is bool castedValue)
-                return castedValue ? reduced_opacity : DefaultOpacityForFalse;
+                return castedValue ? value_for_true : ValueForFalse;
 
-            return DefaultOpacityForInvalid;
+            return ValueForInvalid;
         }
 
         /// <inheritdoc />
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            double reduced_opacity = parameter == null ? DefaultOpacityForTrue : System.Convert.ToDouble(parameter, CultureInfo.InvariantCulture);
-
-            return value is double casted && casted == reduced_opacity;
+            return value is IComparable casted && casted == (parameter ?? ValueForTrue);
         }
 
         /// <inheritdoc />
