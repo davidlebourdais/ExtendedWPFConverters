@@ -29,6 +29,9 @@ namespace EMA.ExtendedWPFConverters
             if(!double.TryParse(value.ToString(),  NumberStyles.Any, CultureInfo.InvariantCulture, out double value1)) 
                 return ValueForInvalid;
 
+            // Return input value if no operation to perform:
+            if (Operation == MathOperation.None) return value;
+
             // Returns itself is value2 is invalid:
             if(!double.TryParse(parameter.ToString(),  NumberStyles.Any, CultureInfo.InvariantCulture, out double value2)) return value1;
             

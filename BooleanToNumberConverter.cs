@@ -6,7 +6,7 @@ using System.Windows.Markup;
 namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
-    /// Converts a boolean value into an <see cref="IComparable"/> value from a given targeted <see cref="NumberType"/>.
+    /// Converts a boolean value into an <see cref="IComparable"/> one.
     /// </summary>
     public class BooleanToNumberConverter : MarkupExtension, IValueConverter
     {
