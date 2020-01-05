@@ -5,7 +5,7 @@ using System.Windows.Markup;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EMA.View.Converters
+namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
     /// Performs a mathematical operation on a passed set of numbers.

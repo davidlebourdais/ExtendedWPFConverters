@@ -1,4 +1,4 @@
-﻿namespace EMA.View.Converters
+﻿namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
     /// A set of boolean operation that can be 

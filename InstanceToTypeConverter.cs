@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace EMA.View.Converters
+namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
     /// Gets a given instance and returns its type.

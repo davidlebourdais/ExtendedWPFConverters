@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace EMA.View.Converters
+namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
     /// A converter for multiboolean operations to be used with multibindings.

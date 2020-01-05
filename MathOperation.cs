@@ -1,4 +1,4 @@
-﻿namespace EMA.View.Converters
+﻿namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
     /// A set of mathematical operation that can be 

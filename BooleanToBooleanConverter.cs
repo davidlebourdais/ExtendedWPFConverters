@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace EMA.View.Converters
+namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
     /// A converter to perform operations over a single boolean value.

@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace EMA.View.Converters
+namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
     /// Converter between multi booleans and visibility object to be used in multibindings.

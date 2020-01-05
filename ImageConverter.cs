@@ -6,7 +6,7 @@ using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using System.Windows.Markup;
 
-namespace EMA.View.Converters
+namespace EMA.ExtendedWPFConverters
 {
     /// Imported and adapted by David from: https://www.codeproject.com/Tips/517457/Simple-Way-to-Bind-an-Image-Class-as-Source-to-Ima
 
