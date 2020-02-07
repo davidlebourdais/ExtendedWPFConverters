@@ -16,7 +16,15 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         public BooleanOperation Operation { get; set; } = BooleanOperation.And;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Converts several booleans to a single result through a boolean operation.
+        /// </summary>
+        /// <param name="values">The array boolean of values that the source bindings in the MultiBinding produces. 
+        /// The value UnsetValue indicates that the source binding has no value to provide for conversion.</param>
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">Unused.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>The boolean result of the boolean operation applied to all boolean inputs.</returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             switch(Operation)
@@ -60,13 +68,24 @@ namespace EMA.ExtendedWPFConverters
             }
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Converts a binding target value to the source binding values.
+        /// </summary>
+        /// <param name="value">Unused.</param>
+        /// <param name="targetTypes">Unused.</param>
+        /// <param name="parameter">Unused.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>Nothing.</returns>
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns an object that is provided as the value of the target property for this markup extension
+        /// </summary>
+        /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
+        /// <returns>The object value to set on the property where the extension is applied.</returns>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return this;

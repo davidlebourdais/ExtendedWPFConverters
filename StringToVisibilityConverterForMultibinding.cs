@@ -9,7 +9,7 @@ using System.Windows.Markup;
 namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
-    /// Converter for multiboolean operations to be used in multibindings.
+    /// Converts a string coupled to a set of optional booleans (enablers) to a visibility value.
     /// </summary>
     public class StringToVisibilityConverterForMultibinding : MarkupExtension, IMultiValueConverter
     {
@@ -28,7 +28,17 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         public BooleanOperation OperationWithEnablers { get; set; } = BooleanOperation.And;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Converts a string and passed booleans to a visibility value regarding to whether the string is null or empty and the 
+        /// boolean operation result applied to boolean entries is verified.
+        /// </summary>
+        /// <param name="values">The array of values that the source bindings in the MultiBinding produces. 
+        /// First value must be the string to assess, while remaining values are booleans. 
+        /// The value UnsetValue indicates that the source binding has no value to provide for conversion.</param>
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">Unused.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>A visibility value based on the string state and the result of the boolean operation applied to boolean inputs.</returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             // Fist value must be the string;
@@ -60,13 +70,24 @@ namespace EMA.ExtendedWPFConverters
             return ValueForNotNullOrEmpty;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Converts a binding target value to the source binding values.
+        /// </summary>
+        /// <param name="value">Unused.</param>
+        /// <param name="targetTypes">Unused.</param>
+        /// <param name="parameter">Unused.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>Nothing.</returns>
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns an object that is provided as the value of the target property for this markup extension
+        /// </summary>
+        /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
+        /// <returns>The object value to set on the property where the extension is applied.</returns>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return this;
