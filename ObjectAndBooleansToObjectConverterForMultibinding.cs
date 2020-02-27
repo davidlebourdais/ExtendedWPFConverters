@@ -10,14 +10,21 @@ namespace EMA.ExtendedWPFConverters
     /// Converter that returns first object (values[0]) or null regarding to passed boolean values in the next values[1..n].
     /// This is a way to provide object based on bound conditions using multibinding.
     /// </summary>
-    public class ObjectAndBooleansToObjectConverter : MarkupExtension, IMultiValueConverter
+    public class ObjectAndBooleansToObjectConverterForMultibinding : MarkupExtension, IMultiValueConverter
     {
         /// <summary>
         /// Boolean operation to be applied during conversion.
         /// </summary>
         public BooleanOperation Operation { get; set; } = BooleanOperation.None;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns first passed object depending on a boolean operation applied to remaining boolean entries.
+        /// </summary>
+        /// <param name="values">Should contain the object to be returned in first position, then a set of boolean entries to be assessed through a boolean operation.
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">Unused.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>The first passed object or null depending on the result of the boolean operation.</returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Length == 0) return null;
@@ -81,13 +88,24 @@ namespace EMA.ExtendedWPFConverters
             }
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <param name="value">Unused.</param>
+        /// <param name="targetTypes">Unused.</param>
+        /// <param name="parameter">Unused.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>Nothing.</returns>
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns an object that is provided as the value of the target property for this markup extension
+        /// </summary>
+        /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
+        /// <returns>The object value to set on the property where the extension is applied.</returns>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return this;
