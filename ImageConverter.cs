@@ -15,7 +15,14 @@ namespace EMA.ExtendedWPFConverters
     /// </summary>
     public class ImageToSourceConverter : MarkupExtension, IValueConverter
     {
-        /// <inheritdoc />
+        /// <summary>
+        /// Converts a <see cref="Image"/> into a <see cref="BitmapImage"/>.
+        /// </summary>
+        /// <param name="value">A <see cref="Image"/> source entry.</param>
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">Unused.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>A <see cref="BitmapImage"/> ready to be rendered.</returns>
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (value is Image image)
@@ -42,14 +49,25 @@ namespace EMA.ExtendedWPFConverters
             return null;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Unsupported conversion method.
+        /// </summary>
+        /// <param name="value">Unused.</param>
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">Unused.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>Nothing.</returns>
         public object ConvertBack(object value, Type targetType,
             object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotSupportedException();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns an object that is provided as the value of the target property for this markup extension
+        /// </summary>
+        /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
+        /// <returns>The object value to set on the property where the extension is applied.</returns>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return this;

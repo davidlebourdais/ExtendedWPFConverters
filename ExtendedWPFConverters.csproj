@@ -6,13 +6,12 @@
     <PackageDescription>Proposes a list of commonly used converters for WPF.</PackageDescription>
     <PackageTags>EMA;WPF;Converters</PackageTags>
     <UseWPF>true</UseWPF>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <Authors>David Le Bourdais</Authors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- <PackageReference Include="InheritDoc" Version="2.5.0" /> -->
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
   

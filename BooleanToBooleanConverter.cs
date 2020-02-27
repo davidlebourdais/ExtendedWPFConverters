@@ -15,7 +15,14 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         public BooleanOperation Operation { get; set; } = BooleanOperation.None;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Performs a binary operation over a single boolean.
+        /// </summary>
+        /// <param name="value">Must be a boolean.</param>
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">Unused.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>The boolean result of the boolean operation applied to the boolean input.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool value_bool = false;
@@ -47,7 +54,14 @@ namespace EMA.ExtendedWPFConverters
             }
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Converts a boolean value into another boolean one through the boolean operation.
+        /// </summary>
+        /// <param name="value">A boolean value.</param>
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">Unused.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>The inverted operation result over the passed entry.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is bool valueBoolean)
@@ -77,7 +91,11 @@ namespace EMA.ExtendedWPFConverters
             return false;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns an object that is provided as the value of the target property for this markup extension
+        /// </summary>
+        /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
+        /// <returns>The object value to set on the property where the extension is applied.</returns>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return this;

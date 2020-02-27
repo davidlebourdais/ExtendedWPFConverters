@@ -25,7 +25,14 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         public double DefaultOpacityForInvalid { get; set; } = 1.0d;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Converts a boolean entry into an opacity (double between 0.0 and 1.0) value.
+        /// </summary>
+        /// <param name="value">A boolean entry.</param>
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">An optional opacity value to be return when value is true (overrides parameterized one).</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>An opacity value corresponding to the entry.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             // One can pass dynamic opacity value for "true" through parameter:
@@ -37,15 +44,25 @@ namespace EMA.ExtendedWPFConverters
             return DefaultOpacityForInvalid;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns a boolean value corresponding to a given opacity.
+        /// </summary>
+        /// <param name="value">The opacity value to assess.</param>
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">Unused.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>True if opacity value matches <see cref="DefaultOpacityForTrue"/>, false otherwise.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             double reduced_opacity = parameter == null ? DefaultOpacityForTrue : System.Convert.ToDouble(parameter, CultureInfo.InvariantCulture);
-
             return value is double casted && casted == reduced_opacity;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns an object that is provided as the value of the target property for this markup extension
+        /// </summary>
+        /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
+        /// <returns>The object value to set on the property where the extension is applied.</returns>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return this;

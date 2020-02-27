@@ -20,7 +20,7 @@ namespace EMA.ExtendedWPFConverters
         /// <summary>
         /// Returns first passed object depending on a boolean operation applied to remaining boolean entries.
         /// </summary>
-        /// <param name="values">Should contain the object to be returned in first position, then a set of boolean entries to be assessed through a boolean operation.
+        /// <param name="values">Should contain the object to be returned in first position, then a set of boolean entries to be assessed through a boolean operation.</param>
         /// <param name="targetType">Unused.</param>
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
@@ -89,7 +89,7 @@ namespace EMA.ExtendedWPFConverters
         }
 
         /// <summary>
-        /// Not implemented.
+        /// Converts a binding target value to the source binding values.
         /// </summary>
         /// <param name="value">Unused.</param>
         /// <param name="targetTypes">Unused.</param>

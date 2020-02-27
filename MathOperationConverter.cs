@@ -22,7 +22,14 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         public object ValueForInvalid { get; set; } = Binding.DoNothing;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Performs a mathematical operation between entry and parameter and returns the result.
+        /// </summary>
+        /// <param name="value">A numerical value.</param>
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">A numerical value.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>The result of the parameterized mathematical operation between entry and the parameter.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
 
@@ -56,7 +63,14 @@ namespace EMA.ExtendedWPFConverters
             }
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Performs an inverse mathematical operation on the entry and a passed parameter and returns the result.
+        /// </summary>
+        /// <param name="value">A numerical value.</param>
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">A numerical value.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>The inverse result of what should be obtained on the passed entries if the <see cref="Convert"/> method was called.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
@@ -83,7 +97,11 @@ namespace EMA.ExtendedWPFConverters
             }
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns an object that is provided as the value of the target property for this markup extension
+        /// </summary>
+        /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
+        /// <returns>The object value to set on the property where the extension is applied.</returns>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return this;

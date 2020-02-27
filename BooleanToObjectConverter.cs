@@ -15,7 +15,16 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         public BooleanOperation Operation { get; set; } = BooleanOperation.None;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns an object passed as a parameter regarding to the boolean entry, associated to 
+        /// a boolean operation.
+        /// </summary>
+        /// <param name="value">A boolean entry.</param>
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">The object to be returned when the operation result is positive.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>The object passed as parameter or null depending on the boolean 
+        /// operation result applied on the boolean entry.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool value_bool = false;
@@ -46,13 +55,24 @@ namespace EMA.ExtendedWPFConverters
             }
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns null.
+        /// </summary>
+        /// <param name="value">Unused.</param>
+        /// <param name="targetType">Unused.</param>
+        /// <param name="parameter">Unused.</param>
+        /// <param name="culture">Unused.</param>
+        /// <returns>Null.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return null;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns an object that is provided as the value of the target property for this markup extension
+        /// </summary>
+        /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
+        /// <returns>The object value to set on the property where the extension is applied.</returns>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return this;
