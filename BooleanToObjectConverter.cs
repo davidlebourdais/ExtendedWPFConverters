@@ -25,6 +25,7 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="culture">Unused.</param>
         /// <returns>The object passed as parameter or null depending on the boolean 
         /// operation result applied on the boolean entry.</returns>
+        /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool value_bool = false;
@@ -56,7 +57,7 @@ namespace EMA.ExtendedWPFConverters
         }
 
         /// <summary>
-        /// Returns null.
+        /// Unsupported conversion method. Returns null.
         /// </summary>
         /// <param name="value">Unused.</param>
         /// <param name="targetType">Unused.</param>

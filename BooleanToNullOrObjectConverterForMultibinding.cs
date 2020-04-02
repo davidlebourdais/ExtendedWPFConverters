@@ -19,7 +19,7 @@ namespace EMA.ExtendedWPFConverters
         public BooleanOperation Operation { get; set; } = BooleanOperation.None;
 
         /// <summary>
-        /// Converts several booleans to a single object or null value through boolean operation.
+        /// Converts several booleans to a single object or null value through a boolean operation.
         /// </summary>
         /// <param name="values">The array of values that the source bindings in the MultiBinding produces. 
         /// First object is the object to be returned in case the boolean operation results to true. Rest of the objects
@@ -29,6 +29,7 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>The passed first object or null, depending on the result of the boolean operation applied to boolean inputs.</returns>
+        /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             // First value will be our object:
@@ -96,13 +97,14 @@ namespace EMA.ExtendedWPFConverters
         }
 
         /// <summary>
-        /// Converts a binding target value to the source binding values.
+        /// Unsupported conversion method.
         /// </summary>
         /// <param name="value">Unused.</param>
         /// <param name="targetTypes">Unused.</param>
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>Nothing.</returns>
+        /// <exception cref="NotSupportedException">Thrown if this method is called.</exception>
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();

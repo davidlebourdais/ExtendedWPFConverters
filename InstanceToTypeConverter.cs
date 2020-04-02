@@ -31,6 +31,7 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>Nothing.</returns>
+        /// <exception cref="NotSupportedException">Thrown if this method is called.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotSupportedException();

@@ -71,13 +71,14 @@ namespace EMA.ExtendedWPFConverters
         }
 
         /// <summary>
-        /// Converts a binding target value to the source binding values.
+        /// Unsupported conversion method.
         /// </summary>
         /// <param name="value">Unused.</param>
         /// <param name="targetTypes">Unused.</param>
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>Nothing.</returns>
+        /// <exception cref="NotSupportedException">Thrown if this method is called.</exception>
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();

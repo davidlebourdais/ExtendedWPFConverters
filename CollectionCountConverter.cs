@@ -38,13 +38,14 @@ namespace EMA.ExtendedWPFConverters
         }
 
         /// <summary>
-        /// Not supported operation.
+        /// Unsupported conversion method.
         /// </summary>
         /// <param name="value">Unused.</param>
         /// <param name="targetType">Unused.</param>
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>Nothing.</returns>
+        /// <exception cref="NotSupportedException">Thrown if this method is called.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();

@@ -30,6 +30,7 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="parameter">A numerical value.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>The result of the parameterized mathematical operation between entry and the parameter.</returns>
+        /// <exception cref="NotSupportedException">Thrown if the math operation is not supported.</exception>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
 
@@ -59,7 +60,7 @@ namespace EMA.ExtendedWPFConverters
                 case MathOperation.Power:
                     return Math.Pow(value1, value2);
                 default:
-                    return ValueForInvalid;
+                    throw new NotSupportedException(Operation.ToString() + " is not supported for " + nameof(MathOperationConverter) + ".");
             }
         }
 
@@ -71,6 +72,7 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="parameter">A numerical value.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>The inverse result of what should be obtained on the passed entries if the <see cref="Convert"/> method was called.</returns>
+        /// <exception cref="NotSupportedException">Thrown if the math operation is not supported for convert back.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
@@ -92,9 +94,9 @@ namespace EMA.ExtendedWPFConverters
                 }
             }
             catch
-            {
-                throw new NotSupportedException();            
-            }
+            { }
+
+            return null;
         }
 
         /// <summary>

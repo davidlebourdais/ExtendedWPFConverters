@@ -23,6 +23,7 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>The boolean result of the boolean operation applied to the boolean input.</returns>
+        /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool value_bool = false;
@@ -62,6 +63,7 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>The inverted operation result over the passed entry.</returns>
+        /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is bool valueBoolean)
