@@ -13,7 +13,7 @@ namespace EMA.ExtendedWPFConverters
         /// <summary>
         /// Boolean operation to be applied during conversion.
         /// </summary>
-        public BooleanOperation Operation { get; set; } = BooleanOperation.None;
+        public ReducedBooleanOperation Operation { get; set; } = ReducedBooleanOperation.None;
 
         /// <summary>
         /// Returns an object passed as a parameter regarding to the boolean entry, associated to 
@@ -25,7 +25,6 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="culture">Unused.</param>
         /// <returns>The object passed as parameter or null depending on the boolean 
         /// operation result applied on the boolean entry.</returns>
-        /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool value_bool = false;
@@ -33,40 +32,23 @@ namespace EMA.ExtendedWPFConverters
                 return null;
             value_bool = (bool)value;
 
-            switch (Operation)
-            {
-                case BooleanOperation.Not:
-                case BooleanOperation.Nand:
-                case BooleanOperation.Nor:
-                    return value_bool ? null : parameter;
-                case BooleanOperation.None:
-                case BooleanOperation.Equality:
-                case BooleanOperation.Or:
-                case BooleanOperation.And:
-                    return value_bool ? parameter : null;
-
-                case BooleanOperation.Xor:
-                    return null;
-
-                case BooleanOperation.Xnor:
-                    return parameter;
-
-                default:
-                    throw new NotSupportedException(Operation.ToString() + " is not supported for " + nameof(BooleanToObjectConverter) + ".");
-            }
+            return Operation == ReducedBooleanOperation.Not ? 
+              (value_bool ? null : parameter) // not operation
+            : (value_bool ? parameter : null);  // normal operation
         }
 
         /// <summary>
-        /// Unsupported conversion method. Returns null.
+        /// Returns true or false depending on wether the 
+        /// input is null or not, and depending on the current operation.
         /// </summary>
-        /// <param name="value">Unused.</param>
+        /// <param name="value">The object value to be assessed.</param>
         /// <param name="targetType">Unused.</param>
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
-        /// <returns>Null.</returns>
+        /// <returns>True if the object is not null (not null if inverse operation is set), the opposite value otherwise.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return null;
+            return Operation == ReducedBooleanOperation.Not ? value == null : value != null;
         }
 
         /// <summary>
