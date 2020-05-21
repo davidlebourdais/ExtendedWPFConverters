@@ -1,71 +1,74 @@
 ﻿using System;
-using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Markup;
 
 namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
     /// Converts a boolean value into an opacity level.
     /// </summary>
-    public class BooleanToOpacityConverter : MarkupExtension, IValueConverter
+    public class BooleanToOpacityConverter : BooleanConverterBase<double>
     {
+        private double value_for_true = 1.0d;
+        private double value_for_false = 0.38d;
+        private double value_for_invalid = 1.0d;
+
         /// <summary>
         /// Value to be applied when converted value is true.
         /// </summary>
-        public double DefaultOpacityForTrue { get; set; } = 0.4d;
+        /// <exception cref="ArgumentException">If passed value is negative or >1.</exception>
+        public override double ValueForTrue
+        {
+            get => value_for_true;
+            set
+            {
+                if (value != value_for_true)
+                {
+                    if (value < 0) 
+                        throw new ArgumentException("Cannot set negative values on " + nameof(ValueForTrue) + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
+                    else if (value > 1.0)
+                        throw new ArgumentException("Cannot set >1.0 values on " + nameof(ValueForTrue) + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
+                    else value_for_true = value;
+                }
+            }
+        }
 
         /// <summary>
         /// Value to be applied when converted value is false.
         /// </summary>
-        public double DefaultOpacityForFalse { get; set; } = 1.0d;
+        /// <exception cref="ArgumentException">If passed value is negative or >1.</exception>
+        public override double ValueForFalse
+        {
+            get => value_for_false;
+            set
+            {
+                if (value != value_for_false)
+                {
+                    if (value < 0)
+                        throw new ArgumentException("Cannot set negative values on " + nameof(ValueForFalse) + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
+                    else if (value > 1.0)
+                        throw new ArgumentException("Cannot set >1.0 values on " + nameof(ValueForFalse) + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
+                    else value_for_false = value;
+                }
+            }
+        }
 
         /// <summary>
         /// Value to be applied when converted value is null or is not a boolean.
         /// </summary>
-        public double DefaultOpacityForInvalid { get; set; } = 1.0d;
-
-        /// <summary>
-        /// Converts a boolean entry into an opacity (double between 0.0 and 1.0) value.
-        /// </summary>
-        /// <param name="value">A boolean entry.</param>
-        /// <param name="targetType">Unused.</param>
-        /// <param name="parameter">An optional opacity value to be return when value is true (overrides parameterized one).</param>
-        /// <param name="culture">Unused.</param>
-        /// <returns>An opacity value corresponding to the entry.</returns>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        /// <exception cref="ArgumentException">If passed value is negative or >1.</exception>
+        public override double ValueForInvalid
         {
-            // One can pass dynamic opacity value for "true" through parameter:
-            double reduced_opacity = parameter == null ? DefaultOpacityForTrue : System.Convert.ToDouble(parameter, CultureInfo.InvariantCulture);
-
-            if (value is bool castedValue)
-                return castedValue ? reduced_opacity : DefaultOpacityForFalse;
-
-            return DefaultOpacityForInvalid;
-        }
-
-        /// <summary>
-        /// Returns a boolean value corresponding to a given opacity.
-        /// </summary>
-        /// <param name="value">The opacity value to assess.</param>
-        /// <param name="targetType">Unused.</param>
-        /// <param name="parameter">Unused.</param>
-        /// <param name="culture">Unused.</param>
-        /// <returns>True if opacity value matches <see cref="DefaultOpacityForTrue"/>, false otherwise.</returns>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            double reduced_opacity = parameter == null ? DefaultOpacityForTrue : System.Convert.ToDouble(parameter, CultureInfo.InvariantCulture);
-            return value is double casted && casted == reduced_opacity;
-        }
-
-        /// <summary>
-        /// Returns an object that is provided as the value of the target property for this markup extension
-        /// </summary>
-        /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
-        /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
+            get => value_for_invalid;
+            set
+            {
+                if (value != value_for_invalid)
+                {
+                    if (value < 0)
+                        throw new ArgumentException("Cannot set negative values on " + nameof(ValueForInvalid) + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
+                    else if (value > 1.0)
+                        throw new ArgumentException("Cannot set >1.0 values on " + nameof(ValueForInvalid) + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
+                    else value_for_invalid = value;
+                }
+            }
         }
     }
 }
