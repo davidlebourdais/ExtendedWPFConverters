@@ -22,9 +22,14 @@ namespace EMA.ExtendedWPFConverters
         public Thickness ValueForTrue { get; set; } = new Thickness(1);
 
         /// <summary>
-        /// <see cref="Thickness"/> value to be applied when conversion operation output is false, null or not boolean.
+        /// <see cref="Thickness"/> value to be applied when conversion operation output is false.
         /// </summary>
         public Thickness ValueForFalse { get; set; } = new Thickness(0);
+
+        /// <summary>
+        /// <see cref="Thickness"/> value to be applied when input is null or not boolean.
+        /// </summary>
+        public Thickness ValueForInvalid { get; set; } = new Thickness(0);
 
         /// <summary>
         /// Returns a thickness value that depends on the boolean entry processed through the boolean operation.
@@ -37,7 +42,8 @@ namespace EMA.ExtendedWPFConverters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var result = (value as bool?) == true;
-            return Operation == ReducedBooleanOperation.Not ? !result : result;
+            var operated = Operation == ReducedBooleanOperation.Not ? !result : result;
+            return operated ? ValueForTrue : ValueForFalse;
         }
 
         /// <summary>
