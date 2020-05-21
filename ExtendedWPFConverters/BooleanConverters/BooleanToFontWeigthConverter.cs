@@ -17,9 +17,19 @@ namespace EMA.ExtendedWPFConverters
         public FontWeight ValueForTrue { get; set; } = FontWeights.DemiBold;
 
         /// <summary>
-        /// <see cref="FontWeight"/> value to be applied when converted value is false, null or not boolean.
+        /// <see cref="FontWeight"/> value to be applied when converted value is false.
         /// </summary>
         public FontWeight ValueForFalse { get; set; } = FontWeights.Normal;
+
+        /// <summary>
+        /// <see cref="FontWeight"/> value to be applied when input value is invalid (null or not boolean).
+        /// </summary>
+        public FontWeight ValueForInvalid { get; set; } = FontWeights.Normal;
+
+        /// <summary>
+        /// Specifies the operation to be applied with the converter.
+        /// </summary>
+        public ReducedBooleanOperation Operation { get; set; } = ReducedBooleanOperation.None;
 
         /// <summary>
         /// Returns a <see cref="FontWeight"/> value corresponding to a passed boolean value.
@@ -31,7 +41,10 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>The font weight corresponding to the boolean entry.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is bool value_bool && value_bool ? ValueForTrue : ValueForFalse;
+            if (!(value is bool value_bool))
+                return ValueForInvalid;
+            else
+                return Operation == ReducedBooleanOperation.None ? (value_bool ? ValueForTrue : ValueForFalse) : (value_bool ? ValueForFalse : ValueForTrue);
         }
 
         /// <summary>
@@ -44,7 +57,7 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>A boolean value that matches best the passed entry.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is FontWeight casted && casted == ValueForTrue;
+            return value is FontWeight casted && casted == (Operation == ReducedBooleanOperation.None ? ValueForTrue : ValueForFalse);
         }
 
         /// <summary>

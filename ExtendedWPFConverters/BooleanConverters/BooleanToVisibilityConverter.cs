@@ -17,14 +17,19 @@ namespace EMA.ExtendedWPFConverters
         public Visibility ValueForTrue { get; set; } = Visibility.Visible;
 
         /// <summary>
-        /// Value to be applied when converted value is false, null or invalid.
+        /// Value to be applied when converted value is false.
         /// </summary>
         public Visibility ValueForFalse { get; set; } = Visibility.Collapsed;
 
         /// <summary>
+        /// Value to be applied when input value null or invalid.
+        /// </summary>
+        public Visibility ValueForInvalid { get; set; } = Visibility.Collapsed;
+
+        /// <summary>
         /// Boolean operation to be applied during conversion.
         /// </summary>
-        public BooleanOperation Operation { get; set; } = BooleanOperation.None;
+        public ReducedBooleanOperation Operation { get; set; } = ReducedBooleanOperation.None;
 
         /// <summary>
         /// Converts a boolean entry into a visibility value.
@@ -39,26 +44,15 @@ namespace EMA.ExtendedWPFConverters
         {
             bool value_bool = false;
             if (value == null || !(value is bool))
-                return ValueForFalse;
+                return ValueForInvalid;
             value_bool = (bool)value;
 
             switch (Operation)
             {
-                case BooleanOperation.Not:
-                case BooleanOperation.Nand:
-                case BooleanOperation.Nor:
+                case ReducedBooleanOperation.Not:
                     return value_bool ? ValueForFalse : ValueForTrue;
-                case BooleanOperation.None:
-                case BooleanOperation.Equality:
-                case BooleanOperation.Or:
-                case BooleanOperation.And:
+                case ReducedBooleanOperation.None:
                     return value_bool ? ValueForTrue : ValueForFalse;
-
-                case BooleanOperation.Xor:
-                    return ValueForFalse;
-
-                case BooleanOperation.Xnor:
-                    return ValueForTrue;
 
                 default:
                     throw new NotSupportedException(Operation.ToString() + " is not supported for " + nameof(BooleanToVisibilityConverter) + ".");
@@ -76,25 +70,14 @@ namespace EMA.ExtendedWPFConverters
         /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is Visibility valueVisbiility)
+            if (value is Visibility valueVisbility)
             {
                 switch (Operation)
                 {
-                    case BooleanOperation.Not:
-                    case BooleanOperation.Nand:
-                    case BooleanOperation.Nor:
-                        return valueVisbiility == ValueForTrue ? false : true;
-                    case BooleanOperation.None:
-                    case BooleanOperation.Equality:
-                    case BooleanOperation.Or:
-                    case BooleanOperation.And:
-                        return valueVisbiility == ValueForTrue ? true : false;
-
-                    case BooleanOperation.Xor:
-                        return false;
-
-                    case BooleanOperation.Xnor:
-                        return true;
+                    case ReducedBooleanOperation.Not:
+                        return valueVisbility == ValueForTrue ? false : true;
+                    case ReducedBooleanOperation.None:
+                        return valueVisbility == ValueForTrue ? true : false;
 
                     default:
                         throw new NotSupportedException(Operation.ToString() + " is not supported for " + nameof(BooleanToVisibilityConverter) + ".");

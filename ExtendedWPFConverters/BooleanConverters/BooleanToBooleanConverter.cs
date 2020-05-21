@@ -13,7 +13,7 @@ namespace EMA.ExtendedWPFConverters
         /// <summary>
         /// Specifies the operation to be applied with the converter.
         /// </summary>
-        public BooleanOperation Operation { get; set; } = BooleanOperation.None;
+        public ReducedBooleanOperation Operation { get; set; } = ReducedBooleanOperation.None;
 
         /// <summary>
         /// Performs a binary operation over a single boolean.
@@ -32,26 +32,14 @@ namespace EMA.ExtendedWPFConverters
 
             switch (Operation)
             {
-                case BooleanOperation.Not:
-                case BooleanOperation.Nand:
-                case BooleanOperation.Nor:
+                case ReducedBooleanOperation.Not:
                     return !value_bool;
 
-                case BooleanOperation.None:
-                case BooleanOperation.Equality:
-                case BooleanOperation.Or:
-                case BooleanOperation.And:
+                case ReducedBooleanOperation.None:
                     return value_bool;
-
-                case BooleanOperation.Xor:
-                    return false;
-
-                case BooleanOperation.Xnor:
-                    return true;
 
                 default:
                     throw new NotSupportedException(Operation.ToString() + " is not supported for " + nameof(BooleanToBooleanConverter) + ".");
-
             }
         }
 
@@ -70,19 +58,10 @@ namespace EMA.ExtendedWPFConverters
             {
                 switch (Operation)
                 {
-                    case BooleanOperation.Not:
-                    case BooleanOperation.Nand:
-                    case BooleanOperation.Nor:
+                    case ReducedBooleanOperation.Not:
                         return !valueBoolean;
 
-                    case BooleanOperation.None:
-                    case BooleanOperation.Equality:
-                    case BooleanOperation.Or:
-                    case BooleanOperation.And:
-                        return valueBoolean;
-
-                    case BooleanOperation.Xor:
-                    case BooleanOperation.Xnor:
+                    case ReducedBooleanOperation.None:
                         return valueBoolean;
 
                     default:

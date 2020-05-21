@@ -24,12 +24,13 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="parameter">The object to be returned when the operation result is positive.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>The object passed as parameter or null depending on the boolean 
-        /// operation result applied on the boolean entry.</returns>
+        /// operation result applied on the boolean entry. An invalid boolean (null or not boolean) is 
+        /// processed as a 'false'.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool value_bool = false;
             if (value == null || !(value is bool))
-                return null;
+                return Operation == ReducedBooleanOperation.Not ? parameter : null;
             value_bool = (bool)value;
 
             return Operation == ReducedBooleanOperation.Not ? 

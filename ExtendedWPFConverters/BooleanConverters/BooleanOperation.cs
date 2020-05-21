@@ -4,7 +4,7 @@
     /// A set of boolean operation that can be 
     /// used as parameter for various converters.
     /// </summary>
-    public enum BooleanOperation : ReducedBooleanOperation
+    public enum BooleanOperation
     {
         /// <summary>
         /// Do nothing operation
