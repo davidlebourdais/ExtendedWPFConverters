@@ -7,7 +7,7 @@ using System.Windows.Markup;
 namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
-    /// Converter to transform a color into a solid color brush.
+    /// Converter to transform a <see cref="Color"/> into a <see cref="SolidColorBrush"/>.
     /// </summary>
     public class ColorToSolidColorBrushConverter : MarkupExtension, IValueConverter
     {
