@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace EMA.ExtendedWPFConverters.Tests
 {
-    public class BooleanConverterTests : BooleanConverterBaseTests
+    public class BooleanConvertersTests : BooleanConvertersTestsBase
     {
         #region BooleanToBooleanConverter
         [Theory]

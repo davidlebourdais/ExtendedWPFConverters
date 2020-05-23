@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace EMA.ExtendedWPFConverters.Tests
 {
-    public class BooleanConverterBaseTests
+    public class BooleanConvertersTestsBase
     {
         protected bool Operate(ReducedBooleanOperation operation, bool input) 
             => operation == ReducedBooleanOperation.None ? input 
