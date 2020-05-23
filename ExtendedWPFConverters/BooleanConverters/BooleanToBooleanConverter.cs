@@ -8,12 +8,14 @@
         /// <summary>
         /// Result to be returned when converted value is true.
         /// </summary>
-        public override bool ValueForTrue { get; set; } = true;
+        /// <remarks>Cannot be edited.</remarks>
+        public override bool ValueForTrue { get => true; set { } }
 
         /// <summary>
         /// Result to be returned when converted value is false.
         /// </summary>
-        public override bool ValueForFalse { get; set; } = false;
+        /// <remarks>Cannot be edited.</remarks>
+        public override bool ValueForFalse { get => false; set { } }
 
         /// <summary>
         /// Result to be returned when input value is null or not boolean.

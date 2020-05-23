@@ -31,6 +31,26 @@ namespace EMA.ExtendedWPFConverters.Tests
             var result = converter.ConvertBack(input, typeof(bool), null, null);
             Assert.Equal(Operate(operation, input), result);
         }
+
+        [Fact]
+        public void BooleanToBooleanConvertersCannotChangeDefaults()
+        {
+            var converter = new BooleanToBooleanConverter();
+
+            // As designed, cannot set value for true or value for false
+            // as there is not point in switching them for bools:
+            var previous = converter.ValueForTrue;
+            converter.ValueForTrue = !previous;
+            Assert.Equal(previous, converter.ValueForTrue);
+            previous = converter.ValueForFalse;
+            converter.ValueForFalse = !previous;
+            Assert.Equal(previous, converter.ValueForFalse);
+
+            // Can set value for invalid though:
+            previous = converter.ValueForInvalid;
+            converter.ValueForInvalid = !previous;
+            Assert.NotEqual(previous, converter.ValueForInvalid);
+        }
         #endregion
 
         #region BooleanToFontWeightConverter
