@@ -40,6 +40,7 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="parameter">An optional value for "true" output (overrides parameterized one nammed <see cref="ValueForTrue"/>).</param>
         /// <param name="culture">Unused.</param>
         /// <returns>A value corresponding to the boolean entry value once processed by the specified <see cref="BooleanConverterBase{TResult}.Operation"/>.</returns>
+        /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             // One can pass value for "true" through parameter:

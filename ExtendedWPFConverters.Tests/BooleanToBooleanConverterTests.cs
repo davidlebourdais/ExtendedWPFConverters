@@ -17,7 +17,7 @@ namespace EMA.ExtendedWPFConverters.Tests
         {
             var converter = new BooleanToBooleanConverter() { Operation = operation };
             var result = converter.Convert(input, typeof(bool), null, null);
-            Assert.Equal(operate(operation, input), result);
+            Assert.Equal(Operate(operation, input), result);
         }
 
         [Theory]
@@ -29,7 +29,7 @@ namespace EMA.ExtendedWPFConverters.Tests
         {
             var converter = new BooleanToBooleanConverter() { Operation = operation };
             var result = converter.ConvertBack(input, typeof(bool), null, null);
-            Assert.Equal(operate(operation, input), result);
+            Assert.Equal(Operate(operation, input), result);
         }
         #endregion
 
@@ -48,12 +48,12 @@ namespace EMA.ExtendedWPFConverters.Tests
         [Theory]
         [MemberData(nameof(FontWeightTestData.ConvertTestData), MemberType= typeof(FontWeightTestData))]
         public void ConvertsBooleanToFontWeight(object input, FontWeight valueForTrue, FontWeight valueForFalse, FontWeight valueForInvalid, ReducedBooleanOperation operation)
-            => base.testConversion(new BooleanToFontWeightConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+            => base.TestConversion(new BooleanToFontWeightConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
         
         [Theory]
         [MemberData(nameof(FontWeightTestData.ConvertBackTestData), MemberType= typeof(FontWeightTestData))]
         public void ConvertsFontWeightBackToBoolean(object input, FontWeight valueForTrue, FontWeight valueForFalse, FontWeight valueForInvalid, ReducedBooleanOperation operation)
-            => base.testConversionBack(new BooleanToFontWeightConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+            => base.TestConversionBack(new BooleanToFontWeightConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
         #endregion
 
         #region BooleanToNumberConverter
@@ -75,12 +75,12 @@ namespace EMA.ExtendedWPFConverters.Tests
         [Theory]
         [MemberData(nameof(NumberTestData.ConvertTestData), MemberType= typeof(NumberTestData))]
         public void ConvertsBooleanToNumber(object input, IComparable valueForTrue, IComparable valueForFalse, IComparable valueForInvalid, ReducedBooleanOperation operation)
-            => base.testConversion(new BooleanToNumberConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+            => base.TestConversion(new BooleanToNumberConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
         
         [Theory]
         [MemberData(nameof(NumberTestData.ConvertBackTestData), MemberType= typeof(NumberTestData))]
         public void ConvertsNumberBackToBoolean(object input, IComparable valueForTrue, IComparable valueForFalse, IComparable valueForInvalid, ReducedBooleanOperation operation)
-            => base.testConversionBack(new BooleanToNumberConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+            => base.TestConversionBack(new BooleanToNumberConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
         #endregion
 
         #region BooleanToOpacityConverter
@@ -100,8 +100,8 @@ namespace EMA.ExtendedWPFConverters.Tests
         public void ConvertsBooleanToOpacity(object input, double valueForTrue, double valueForFalse, double valueForInvalid, ReducedBooleanOperation operation)
         {
             if (valueForTrue < 0 || valueForTrue > 1.0 || valueForFalse < 0 || valueForFalse > 1.0 || valueForInvalid < 0 || valueForInvalid > 1.0)
-                Assert.Throws<ArgumentException>(() => base.testConversion(new BooleanToOpacityConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation));
-            else base.testConversion(new BooleanToOpacityConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+                Assert.Throws<ArgumentException>(() => base.TestConversion(new BooleanToOpacityConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation));
+            else base.TestConversion(new BooleanToOpacityConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
         }
         
         [Theory]
@@ -109,8 +109,8 @@ namespace EMA.ExtendedWPFConverters.Tests
         public void ConvertsOpacityBackToBoolean(object input, double valueForTrue, double valueForFalse, double valueForInvalid, ReducedBooleanOperation operation)
         {
             if (valueForTrue < 0 || valueForTrue > 1.0 || valueForFalse < 0 || valueForFalse > 1.0 || valueForInvalid < 0 || valueForInvalid > 1.0)
-                Assert.Throws<ArgumentException>(() => base.testConversionBack(new BooleanToOpacityConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation));
-            else base.testConversionBack(new BooleanToOpacityConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation); 
+                Assert.Throws<ArgumentException>(() => base.TestConversionBack(new BooleanToOpacityConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation));
+            else base.TestConversionBack(new BooleanToOpacityConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation); 
         }
         #endregion
 
@@ -129,12 +129,12 @@ namespace EMA.ExtendedWPFConverters.Tests
         [Theory]
         [MemberData(nameof(ThicknessTestData.ConvertTestData), MemberType= typeof(ThicknessTestData))]
         public void ConvertsBooleanToThickness(object input, Thickness valueForTrue, Thickness valueForFalse, Thickness valueForInvalid, ReducedBooleanOperation operation)
-           => base.testConversion(new BooleanToThicknessConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+           => base.TestConversion(new BooleanToThicknessConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
         
         [Theory]
         [MemberData(nameof(ThicknessTestData.ConvertBackTestData), MemberType= typeof(ThicknessTestData))]
         public void ConvertsThicknessBackToBoolean(object input, Thickness valueForTrue, Thickness valueForFalse, Thickness valueForInvalid, ReducedBooleanOperation operation)
-            => base.testConversionBack(new BooleanToThicknessConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+            => base.TestConversionBack(new BooleanToThicknessConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
         #endregion
 
         #region BooleanToVisibilityConverter
@@ -153,12 +153,12 @@ namespace EMA.ExtendedWPFConverters.Tests
         [Theory]
         [MemberData(nameof(VisibilityTestData.ConvertTestData), MemberType= typeof(VisibilityTestData))]
         public void ConvertsBooleanToVisibility(object input, Visibility valueForTrue, Visibility valueForFalse, Visibility valueForInvalid, ReducedBooleanOperation operation)
-           => base.testConversion(new BooleanToVisibilityConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+           => base.TestConversion(new BooleanToVisibilityConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
         
         [Theory]
         [MemberData(nameof(VisibilityTestData.ConvertBackTestData), MemberType= typeof(VisibilityTestData))]
         public void ConvertsVisibilityBackToBoolean(object input, Visibility valueForTrue, Visibility valueForFalse, Visibility valueForInvalid, ReducedBooleanOperation operation)
-            => base.testConversionBack(new BooleanToVisibilityConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+            => base.TestConversionBack(new BooleanToVisibilityConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
         #endregion
     
         #region BooleanToObjectConverter
@@ -176,12 +176,12 @@ namespace EMA.ExtendedWPFConverters.Tests
         [Theory]
         [MemberData(nameof(ObjectTestData.ConvertTestData), MemberType= typeof(ObjectTestData))]
         public void ConvertsBooleanToObject(object input, object valueForTrue, object valueForFalse, object valueForInvalid, ReducedBooleanOperation operation)
-           => base.testConversion(new BooleanToObjectConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+           => base.TestConversion(new BooleanToObjectConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
         
         [Theory]
         [MemberData(nameof(ObjectTestData.ConvertBackTestData), MemberType= typeof(ObjectTestData))]
         public void ConvertsObjectBackToBoolean(object input, object valueForTrue, object valueForFalse, object valueForInvalid, ReducedBooleanOperation operation)
-            => base.testConversionBack(new BooleanToObjectConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+            => base.TestConversionBack(new BooleanToObjectConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
         #endregion
     }
 }

@@ -7,14 +7,12 @@ namespace EMA.ExtendedWPFConverters.Tests
 {
     public class BooleanConverterBaseTests
     {
-        protected bool operate(ReducedBooleanOperation operation, bool input) 
+        protected bool Operate(ReducedBooleanOperation operation, bool input) 
             => operation == ReducedBooleanOperation.None ? input 
                                                          : operation == ReducedBooleanOperation.Not ? !input 
                                                                                                     : throw new NotSupportedException("Unknown " + nameof(ReducedBooleanOperation));
 
-        protected bool operateBack(ReducedBooleanOperation operation, bool input) => !operate(operation, input);
-
-        protected void testConversion<T>(BooleanConverterBase<T> converter, object input, T valueForTrue, T valueForFalse, T valueForInvalid, ReducedBooleanOperation operation)
+        protected void TestConversion<T>(BooleanConverterBase<T> converter, object input, T valueForTrue, T valueForFalse, T valueForInvalid, ReducedBooleanOperation operation)
         {
             converter.ValueForTrue = valueForTrue;
             converter.ValueForFalse = valueForFalse;
@@ -25,7 +23,7 @@ namespace EMA.ExtendedWPFConverters.Tests
 
             if (input is bool)
             {
-                var expected = operate(operation, (input as bool?) == true);
+                var expected = Operate(operation, (input as bool?) == true);
                 if (expected)
                     Assert.Equal(valueForTrue, result);
                 else Assert.Equal(valueForFalse, result);
@@ -33,7 +31,7 @@ namespace EMA.ExtendedWPFConverters.Tests
             else Assert.Equal(valueForInvalid, result);
         }
 
-        protected void testConversionBack<T>(BooleanConverterBase<T> converter, object input, T valueForTrue, T valueForFalse, T valueForInvalid, ReducedBooleanOperation operation)
+        protected void TestConversionBack<T>(BooleanConverterBase<T> converter, object input, T valueForTrue, T valueForFalse, T valueForInvalid, ReducedBooleanOperation operation)
         {
             converter.ValueForTrue = valueForTrue;
             converter.ValueForFalse = valueForFalse;
@@ -44,7 +42,7 @@ namespace EMA.ExtendedWPFConverters.Tests
             
             if (input is T && (input.Equals(valueForTrue) || input.Equals(valueForFalse) || input.Equals(valueForInvalid)))
             {
-                var expected = operate(operation, input.Equals(valueForTrue));
+                var expected = Operate(operation, input.Equals(valueForTrue));
                 Assert.Equal(expected, resultBack);
             }
             else Assert.Equal(false, resultBack);
