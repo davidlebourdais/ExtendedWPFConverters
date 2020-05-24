@@ -3,11 +3,12 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Markup;
+using System.Collections.Generic;
 
 namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
-    /// Converter that returns first object or null regarding to passed boolean values.
+    /// Converter that returns first object or null regarding to following passed boolean values.
     /// </summary>
     // <remarks>If first object is null and bool operation is true, null object is returned.</remarks>
     public class BooleanToNullOrObjectConverterForMultibinding : MarkupExtension, IMultiValueConverter
@@ -33,63 +34,38 @@ namespace EMA.ExtendedWPFConverters
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             // First value will be our object:
-            if (values.Length == 0) return null;
-            if (values.Length == 1) return values[0];
+            if (values.Length == 0 || values[0] == null || values.Skip(1).Any(x => !(x is bool))) return null;
 
-            // Next values will be booleans:
-            var new_values = values.Skip(1);
-
+            // Next values will be booleans, take them all until invalid:
+            var newValues = values.Skip(1).Cast<bool>();
+            
             switch(Operation)
             {
                 case BooleanOperation.Equality:
                     bool first_value = false;
-                    if (new_values.Count() > 0)
-                        first_value = (new_values.First() as bool?) != null && ((new_values.First() as bool?) == true);
-
-                    // Case all true:
-                    if (first_value)
-                    {
-                        if (new_values.All(v => ((v as bool?) != null && ((v as bool?) == true))))
-                            return values[0];
-                    }
-                    else // case all false:
-                    {
-                        if (new_values.All(v => ((v as bool?) == null || ((v as bool?) == false))))
-                            return values[0];
-                    }
-
-                    return null;
+                    if (newValues.Any())
+                        first_value = newValues.First();
+                    return newValues.All(x => x == first_value) ? values[0] : null;
 
                 case BooleanOperation.None:
                 case BooleanOperation.And:
-                    if (new_values.Any(v => ((v as bool?) == null || ((v as bool?) == false))))
-                        return null;
-                    return values[0];
+                    return newValues.Any(x => x == false) ? null : values[0];
 
                 case BooleanOperation.Or:
-                    if (new_values.Any(v => ((v as bool?) != null && ((v as bool?) == true))))
-                        return values[0];
-                    return null;
+                    return newValues.Any(x => x == true) ? values[0] : null;
 
                 case BooleanOperation.Xor:
-                    if (new_values.Any(v => ((v as bool?) != null && ((v as bool?) == true))) && !new_values.All(v => ((v as bool?) != null && ((v as bool?) == true))))
-                        return values[0];
-                    return null;
+                    return (newValues.Any(x => x == true) && !newValues.All(x => x == true)) ? values[0] : null;
 
+                case BooleanOperation.Not:
                 case BooleanOperation.Nand:
-                    if (new_values.Any(v => ((v as bool?) == null || ((v as bool?) == false))))
-                        return values[0];
-                    return null;
+                    return newValues.Any(x => x == false) ? values[0] : null;
 
                 case BooleanOperation.Nor:
-                    if (new_values.Any(v => ((v as bool?) != null && ((v as bool?) == true))))
-                        return null;
-                    return values[0];
+                    return newValues.Any(x => x == true) ? null : values[0];
 
                 case BooleanOperation.Xnor:
-                    if (new_values.Any(v => ((v as bool?) != null && ((v as bool?) == true))) && !new_values.All(v => ((v as bool?) != null && ((v as bool?) == true))))
-                        return null;
-                    return values[0];
+                    return (newValues.Any(x => x == true) && !newValues.All(x => x == true)) ? null : values[0];
 
                 default:
                     throw new NotSupportedException(Operation.ToString() + " is not supported for " + nameof(BooleanToNullOrObjectConverterForMultibinding) + ".");
