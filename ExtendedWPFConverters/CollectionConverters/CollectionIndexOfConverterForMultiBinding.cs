@@ -7,15 +7,41 @@ using System.Collections;
 namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
-    /// From a collection passed as a first argument, returns the index of a passed second element in this 
-    /// collection if existing.
+    /// From a collection passed as a first argument, returns an element in this 
+    /// collection that is given as second argument if existing. This is similar to IList.IndexOf(item) method.
     /// </summary>
-    public class IndexOfConverterForMultiBinding : MarkupExtension, IMultiValueConverter
+    public class CollectionIndexOfConverterForMultiBinding : MarkupExtension, IMultiValueConverter
     {
         /// <summary>
         /// Indicates if the output should be a string or a int.
         /// </summary>
-        public bool OutputAsString { get; } = true;
+        public bool OutputAsString { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the default value to be returned when passed
+        /// item to retrieve the index of cannot be found in the collection.
+        /// </summary>
+        public int ValueForNotFound { get; set; } = -1;
+
+        /// <summary>
+        /// Gets or sets the default value to be returned when passed
+        /// item to retrieve the index of cannot be found in the collection.
+        /// </summary>
+        /// <remarks>Used when <see cref="OutputAsString"/> is set.null</remarks>
+        public string ValueStringForNotFound { get; set; } = "";
+
+        /// <summary>
+        /// Gets or sets the default value to be returned when passed input value
+        /// is not iterable.
+        /// </summary>
+        public int ValueForInvalid { get; set; } = -1;
+        
+        /// <summary>
+        /// Gets or sets the default value to be returned when passed input value
+        /// is not iterable.
+        /// <remarks>Used when <see cref="OutputAsString"/> is set.null</remarks>
+        /// </summary>
+        public string ValueStringForInvalid { get; set; } = "";
 
         /// <summary>
         /// From a collection passed as a first argument, returns the index of a passed second element 
@@ -30,9 +56,9 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>The index of the item in the given collection, if any.</returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values.Length < 2 || values[0] == null || values[1] == null) return null;
+            if (values.Length < 2 || values[0] == null || values[1] == null) return OutputAsString ? (object)ValueStringForInvalid : ValueForInvalid;
 
-            if (!(values[0] is IEnumerable collection)) return null;
+            if (!(values[0] is IEnumerable collection)) return OutputAsString ? (object)ValueStringForInvalid : ValueForInvalid;
 
             // If collection is a list, deal with index:
             if (values[0] is IList list)
@@ -42,14 +68,14 @@ namespace EMA.ExtendedWPFConverters
                     var result = list.IndexOf(values[1]);
                     return OutputAsString ? (object)result.ToString() : result;
                 }
-                else return OutputAsString ? (object)string.Empty : - 1;
+                else return OutputAsString ? (object)ValueStringForNotFound : ValueForNotFound;
             }
 
             // Else try to guess by enumerating:
             int index = 0;
             foreach (var item in collection)
             {
-                if (item == values[1])
+                if (item.Equals(values[1]))
                 {
                     var result = index++;
                     return OutputAsString ? (object)result.ToString() : result;
@@ -57,7 +83,7 @@ namespace EMA.ExtendedWPFConverters
                 else index++;
             }
 
-            return OutputAsString ? (object)string.Empty : -1;
+            return OutputAsString ? (object)ValueStringForNotFound : ValueForNotFound;
         }
 
         /// <summary>
