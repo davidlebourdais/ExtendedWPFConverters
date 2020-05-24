@@ -23,6 +23,13 @@ namespace EMA.ExtendedWPFConverters
         public int DefaultCountValue { get; set; } = 0;
 
         /// <summary>
+        /// Gets or sets the default value to be returned when passed input value
+        /// is not iterable and thus cannot be counted.
+        /// </summary>
+        /// <remarks>Active when <see cref="OutputAsString"/> is set.abstract</remarks>
+        public string DefaultCountValueString { get; set; } = "0";
+
+        /// <summary>
         /// Returns the number of items the passed <see cref="IEnumerable"/> has.
         /// </summary>
         /// <param name="value">A <see cref="IEnumerable"/> entry.</param>
@@ -43,7 +50,7 @@ namespace EMA.ExtendedWPFConverters
                     counter++;
                 return OutputAsString ? (object)counter.ToString() : counter;
             }
-            return OutputAsString ? (object)DefaultCountValue.ToString() : DefaultCountValue;
+            return OutputAsString ? (object)DefaultCountValueString : DefaultCountValue;
 
         }
 
