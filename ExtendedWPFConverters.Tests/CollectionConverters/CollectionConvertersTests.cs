@@ -59,5 +59,31 @@ namespace EMA.ExtendedWPFConverters.Tests
                 else Assert.Equal(default_count_value, result);
         }
         #endregion
+
+        #region CollectionFirstItemConverter
+        public static IEnumerable<object[]> CollectionFirstItemData => new List<object[]>
+        {
+            new object[] { new List<object>() { 1, 2, 3} },
+            new object[] { new List<object>() { 5, 4, 3, 2, 1} },
+            new object[] { new List<int>(100) },
+            new object[] { new List<object>(100) },
+            new object[] { "test" },
+            new object[] { new Dictionary<List<int>, int>() { { new List<int>() { 1, 2 }, 3 } } },
+            new object[] { new string[] { "abc", "def" } },
+            new object[] { new List<object>() },
+            new object[] { null }
+        };
+
+        [Theory]
+        [MemberData(nameof(CollectionFirstItemData))]
+        public void ConvertsCollectionToFirstItem(object input)
+        {
+            var converter = new CollectionFirstItemConverter() { };
+            var result = converter.Convert(input, typeof(IEnumerable), null, null);
+            if (input is IEnumerable)
+                Assert.Equal((input as IEnumerable).GetEnumerator().MoveNext(), result);
+            else Assert.Null(result);
+        }
+        #endregion
     }
 }
