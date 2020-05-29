@@ -15,13 +15,13 @@
         /// </summary>
         Add,
         /// <summary>
-        /// Difference operation (negative not allowed)
+        /// Difference operation (negative allowed) 
         /// </summary>
         Substract,
         /// <summary>
-        /// Difference operation (negative allowed)
+        /// Difference operation (negative not allowed)
         /// </summary>
-        SubstractNegativeAllowed,
+        SubstractPositiveOnly,
         /// <summary>
         /// Product operation
         /// </summary>
@@ -37,6 +37,10 @@
         /// <summary>
         /// 'Raise to power' operation
         /// </summary>
-        Power
+        Power,
+        /// <summary>
+        /// Absolute value operation
+        /// </summary>
+        Abs
     }
 }
