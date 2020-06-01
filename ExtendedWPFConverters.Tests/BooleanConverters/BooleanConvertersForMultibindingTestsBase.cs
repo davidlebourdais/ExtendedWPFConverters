@@ -7,7 +7,7 @@ namespace EMA.ExtendedWPFConverters.Tests
 {
     public class BooleanConvertersForMultibindingTestsBase
     {
-        protected bool Operate(BooleanOperation operation, bool[] inputs)
+        public static bool Operate(BooleanOperation operation, bool[] inputs)
         {
             switch(operation)
             {

@@ -11,22 +11,28 @@ namespace EMA.ExtendedWPFConverters
     /// <summary>
     /// Converts a string coupled to a set of optional booleans (enablers) to a visibility value.
     /// </summary>
-    public class StringToVisibilityConverterForMultibinding : MarkupExtension, IMultiValueConverter
+    public class NotNullOrEmptyToVisibilityConverterForMultibinding : MarkupExtension, IMultiValueConverter
     {
-        /// <summary>
-        /// Value to be applied when converted string is null or empty.
-        /// </summary>
-        public Visibility ValueForNullOrEmpty { get; set; } = Visibility.Collapsed;
-
         /// <summary>
         /// Value to be applied when converted string is not null nor empty.
         /// </summary>
         public Visibility ValueForNotNullOrEmpty { get; set; } = Visibility.Visible;
 
         /// <summary>
-        /// Operation to be used accross the mutliple bound values.
+        /// Value to be applied when converted string is null or empty.
         /// </summary>
-        public BooleanOperation OperationWithEnablers { get; set; } = BooleanOperation.And;
+        public Visibility ValueForNullOrEmpty { get; set; } = Visibility.Collapsed;
+        
+        /// <summary>
+        /// Value to be applied when passed boolean enablers are invalid (not that providing
+        /// no boolean is considered as a valid input).
+        /// </summary>
+        public Visibility ValueForInvalid { get; set; } = Visibility.Collapsed;
+
+        /// <summary>
+        /// Operation to be used accross the multiple bound values.
+        /// </summary>
+        public BooleanOperation OperationForEnablers { get; set; } = BooleanOperation.And;
 
         /// <summary>
         /// Converts a string and passed booleans to a visibility value regarding to whether the string is null or empty and the 
@@ -39,35 +45,52 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>A visibility value based on the string state and the result of the boolean operation applied to boolean inputs.</returns>
+        /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            // Fist value must be the string;
-            if (values.Length < 1) return ValueForNullOrEmpty;
+            // There must be a first value:
+            if (values.Length < 1) return ValueForInvalid;
 
-            if (!(values[0] is string text))
-                return ValueForNullOrEmpty;
-            if ((values.Length == 1 || OperationWithEnablers == BooleanOperation.And) && string.IsNullOrEmpty(text))
-                return ValueForNullOrEmpty;
-            else if (values.Length == 1)
-                return ValueForNotNullOrEmpty;
-
-            // Other values will be booleans that will actiated or not the output regarding to
-            // the boolean operation with enablers that is set:
+            // Other values will be booleans that will activate or not the output regarding to
+            // the boolean operation that is set:
             var enablers = new List<bool>();
             for(int i = 1; i < values.Length; i++)
+            {
                 if (values[i] is bool casted)
                     enablers.Add(casted);
+                else return ValueForInvalid;
+            }
 
-            if (enablers.Count == 0)
-                return string.IsNullOrEmpty(text) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
-
-            if (OperationWithEnablers == BooleanOperation.And && enablers.Any(x => x == false))
+            // Return result if first item is a null or empty string:
+            if (string.IsNullOrEmpty(values[0] as string))
                 return ValueForNullOrEmpty;
 
-            if (OperationWithEnablers == BooleanOperation.Or && string.IsNullOrEmpty(text) && enablers.All(x => x == false))
-                return ValueForNullOrEmpty;
+            // Do not process anymore if no inputs were provided.
+            if (enablers.Count == 0)  
+                return ValueForNotNullOrEmpty; 
 
-            return ValueForNotNullOrEmpty;
+            // Fully process otherwise:
+            switch (OperationForEnablers)
+            {
+                case  BooleanOperation.Equality:
+                    return enablers.Skip(1).Any(x => x != enablers.First()) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                case BooleanOperation.None:
+                case BooleanOperation.And:
+                    return enablers.Any(x => x == false) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                case BooleanOperation.Not:
+                case  BooleanOperation.Nand:
+                    return enablers.All(x => x == true) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                case BooleanOperation.Or:
+                    return enablers.All(x => x == false) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                case BooleanOperation.Nor:
+                    return enablers.Any(x => x == true) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                case BooleanOperation.Xor:
+                    return (enablers.Count(x => x == true) % 2 == 0) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                case BooleanOperation.Xnor:
+                    return (enablers.Count(x => x == true) % 2 == 1) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                default:
+                    throw new NotSupportedException(OperationForEnablers.ToString() + " is not supported for " + nameof(NotNullOrEmptyToVisibilityConverterForMultibinding) + ".");
+            }
         }
 
         /// <summary>

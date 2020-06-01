@@ -86,7 +86,7 @@ namespace EMA.ExtendedWPFConverters.Tests
                 var boolInputs = inputs.Skip(1);
                 if (boolInputs.All(x => x is bool))
                 {
-                    var subResult = base.Operate(operation, boolInputs.Where(x => x is bool).Cast<bool>().ToArray());
+                    var subResult = Operate(operation, boolInputs.Where(x => x is bool).Cast<bool>().ToArray());
                     if (subResult)
                         Assert.Equal(inputs[0], result);
                     else Assert.Null(result);
