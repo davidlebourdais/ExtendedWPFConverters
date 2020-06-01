@@ -22,7 +22,7 @@ namespace EMA.ExtendedWPFConverters.Tests
                     return inputs.Any(v => v == true);
 
                 case BooleanOperation.Xor:
-                    return inputs.Any(x => x == true) && !inputs.All(x => x == true);
+                    return inputs.Count(x => x == true) % 2 == 1;
 
                 case BooleanOperation.Not:
                 case BooleanOperation.Nand:
@@ -32,7 +32,7 @@ namespace EMA.ExtendedWPFConverters.Tests
                     return !inputs.Any(v => v == true);
 
                 case BooleanOperation.Xnor:
-                    return !(inputs.Any(x => x == true) && !inputs.All(x => x == true));
+                    return inputs.Count(x => x == true) % 2 == 0;
 
                 default:
                     throw new NotSupportedException("'" + operation.ToString() + "' operation is not supported for " + nameof(BooleanToVisibilityConverterForMultibinding) + ".");

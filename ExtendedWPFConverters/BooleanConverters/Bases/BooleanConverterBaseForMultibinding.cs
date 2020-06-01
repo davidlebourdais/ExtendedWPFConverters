@@ -79,7 +79,7 @@ namespace EMA.ExtendedWPFConverters
                     return ValueForFalse;
 
                 case BooleanOperation.Xor:
-                    if (values.Any(v => ((v as bool?) != null && ((v as bool?) == true))) && !values.All(v => ((v as bool?) != null && ((v as bool?) == true))))
+                    if (values.Count(x => (x as bool?) == true) % 2 == 1)
                         return ValueForTrue;
                     return ValueForFalse;
 
@@ -95,7 +95,7 @@ namespace EMA.ExtendedWPFConverters
                     return ValueForTrue;
 
                 case BooleanOperation.Xnor:
-                    if (values.Any(v => ((v as bool?) != null && ((v as bool?) == true))) && !values.All(v => ((v as bool?) != null && ((v as bool?) == true))))
+                    if (values.Count(x => (x as bool?) == true) % 2 == 1)
                         return ValueForFalse;
                     return ValueForTrue;
 

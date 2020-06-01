@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Markup;
-using System.Collections.Generic;
 
 namespace EMA.ExtendedWPFConverters
 {
@@ -55,7 +54,7 @@ namespace EMA.ExtendedWPFConverters
                     return newValues.Any(x => x == true) ? values[0] : null;
 
                 case BooleanOperation.Xor:
-                    return (newValues.Any(x => x == true) && !newValues.All(x => x == true)) ? values[0] : null;
+                    return newValues.Count(x => x == true) % 2 == 1 ? values[0] : null;
 
                 case BooleanOperation.Not:
                 case BooleanOperation.Nand:
@@ -65,7 +64,7 @@ namespace EMA.ExtendedWPFConverters
                     return newValues.Any(x => x == true) ? null : values[0];
 
                 case BooleanOperation.Xnor:
-                    return (newValues.Any(x => x == true) && !newValues.All(x => x == true)) ? null : values[0];
+                    return newValues.Count(x => x == true) % 2 == 1 ? null : values[0];
 
                 default:
                     throw new NotSupportedException(Operation.ToString() + " is not supported for " + nameof(BooleanToNullOrObjectConverterForMultibinding) + ".");
