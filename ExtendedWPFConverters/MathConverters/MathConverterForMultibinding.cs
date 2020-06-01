@@ -10,7 +10,7 @@ namespace EMA.ExtendedWPFConverters
     /// <summary>
     /// Performs a mathematical operation on a passed set of numbers.
     /// </summary>
-    public class MathOperationConverterForMultibinding: MarkupExtension, IMultiValueConverter
+    public class MathConverterForMultibinding: MarkupExtension, IMultiValueConverter
     {
         /// <summary>
         /// Mathematic operation to be applied.
@@ -21,6 +21,11 @@ namespace EMA.ExtendedWPFConverters
         /// Value to be applied when converted value is null or is not a boolean.
         /// </summary>
         public object ValueForInvalid { get; set; } = Binding.DoNothing;
+
+        /// <summary>
+        /// Indicates if the output should be a double or a string.
+        /// </summary>
+        public bool OutputAsString { get; set; } = false;
 
         /// <summary>
         /// Performs a mathematical operation on passed values.
@@ -34,36 +39,60 @@ namespace EMA.ExtendedWPFConverters
         /// <exception cref="NotSupportedException">Thrown if the math operation is not supported.</exception>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values == null || values.Length < 2 || values[0] == null || values[1] == null) return ValueForInvalid;
+            if (values == null || values.Length < 1 || values[0] == null
+                || (Operation != MathOperation.None && Operation != MathOperation.Absolute) && values.Any(x => x == null)) return ValueForInvalid;
 
             var values_array = new List<double>();
-            values.ToList().ForEach(x => 
+            foreach (var value in values)
             {
-                if (!double.TryParse(x.ToString(),  NumberStyles.Any, CultureInfo.InvariantCulture, out double casted))
+                // If we cannot deduce a number from one of the inputs, return invalid:
+                if (!(double.TryParse(value.ToString().Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double casted)))
+                    return ValueForInvalid;
+                else 
                     values_array.Add(casted);
-            });
+
+                // Stop processing if we got the first value while not needing any more:
+                if (Operation == MathOperation.None || Operation == MathOperation.Absolute)
+                    break;
+            }
 
             if (values_array.Count == 0) return ValueForInvalid;
 
+            var result = values_array.First();
             switch (Operation)
             {
+                case MathOperation.None:
+                    break;
                 case MathOperation.Add:
-                    return values_array.Aggregate((x, y) => x - y);
+                    result = values_array.Aggregate((x, y) => x + y);
+                    break;
                 case MathOperation.Substract:
-                    return values_array.Aggregate((x, y) => (x - y) > 0.0d ? x - y : 0.0d);
-                case MathOperation.SubstractNegativeAllowed:
-                    return values_array.Aggregate((x, y) => x - y);
+                    result = values_array.Aggregate((x, y) => x - y);
+                    break;
+                case MathOperation.SubstractPositiveOnly:
+                    result = values_array.Aggregate((x, y) => x - y);
+                    result = result > 0.0d ? result : 0.0d;
+                    break;
                 case MathOperation.Divide:
-                    return values_array.Aggregate((x, y) => x / y);
+                    result = values_array.Aggregate((x, y) => y != 0 ? x / y : (x != 0 ? x < 0 ? double.NegativeInfinity : double.PositiveInfinity : double.NaN)); 
+                    break;
                 case MathOperation.Multiply:
-                    return values_array.Aggregate((x, y) => x * y);
+                    result = values_array.Aggregate((x, y) => x * y);
+                    break;
                 case MathOperation.Modulo:
-                    return values_array.Aggregate((x, y) => x % y);
+                    result = values_array.Aggregate((x, y) => x % y);
+                    break;
                 case MathOperation.Power:
-                    return values_array.Aggregate((x, y) => Math.Pow(x, y));
+                    result = values_array.Aggregate((x, y) => Math.Pow(x, y));
+                    break;
+                case MathOperation.Absolute:
+                    result = Math.Abs(result);
+                    break;
                 default:
-                    throw new NotSupportedException(Operation.ToString() + " is not supported for " + nameof(MathOperationConverterForMultibinding) + ".");
+                    throw new NotSupportedException(Operation.ToString() + " is not supported for " + nameof(MathConverterForMultibinding) + ".");
             }
+
+            return !OutputAsString ? (object)result : result.ToString(culture ?? CultureInfo.InvariantCulture);
         }
 
         /// <summary>

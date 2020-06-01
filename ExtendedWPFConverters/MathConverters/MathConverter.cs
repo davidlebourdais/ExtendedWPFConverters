@@ -52,7 +52,7 @@ namespace EMA.ExtendedWPFConverters
 
              // Returns invalid is value2 is invalid, except if not going to use it:
             double value2 = 0;
-            if(Operation != MathOperation.None && Operation != MathOperation.Abs && 
+            if(Operation != MathOperation.None && Operation != MathOperation.Absolute && 
                 (parameter == null || !double.TryParse(parameter.ToString().Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out value2))) 
                 return ValueForInvalid;
             
@@ -75,7 +75,7 @@ namespace EMA.ExtendedWPFConverters
                     result = value1 * value2; 
                     break;
                 case MathOperation.Divide:
-                    result = value2 == 0 ? value1 / value2 : (value1 < 0 ? double.NegativeInfinity : double.PositiveInfinity); 
+                    result = value2 != 0 ? value1 / value2 : (value1 != 0 ? value1 < 0 ? double.NegativeInfinity : double.PositiveInfinity : double.NaN); 
                     break;
                 case MathOperation.Modulo:
                     result = value1 % value2;
@@ -83,7 +83,7 @@ namespace EMA.ExtendedWPFConverters
                 case MathOperation.Power:
                     result = Math.Pow(value1, value2);
                     break;
-                case MathOperation.Abs:
+                case MathOperation.Absolute:
                     result = Math.Abs(value1);
                     break;
                 default:
@@ -114,7 +114,7 @@ namespace EMA.ExtendedWPFConverters
             } catch { return ValueForInvalid; }
 
             double value2 = 0;
-            if(Operation != MathOperation.None && Operation != MathOperation.Abs)
+            if(Operation != MathOperation.None && Operation != MathOperation.Absolute)
             {
                 if(parameter == null)
                     return ValueForInvalid;
@@ -129,7 +129,7 @@ namespace EMA.ExtendedWPFConverters
             switch (Operation)
             {
                 case MathOperation.None:
-                case MathOperation.Abs:
+                case MathOperation.Absolute:
                     result = value1;
                     break;
                 case MathOperation.Add:
@@ -150,7 +150,7 @@ namespace EMA.ExtendedWPFConverters
                     result = value1 * value2;
                     break;
                 case MathOperation.Power:
-                    result = Math.Pow(value1, 1 / (value2 == 0 ? double.PositiveInfinity : value2));
+                    result = Math.Pow(value1, value2 != 0 ? 1 / value2 : double.PositiveInfinity);
                     break;
                 default:
                     throw new NotSupportedException(Operation.ToString() + " is not supported for " + nameof(MathConverter) + ".");

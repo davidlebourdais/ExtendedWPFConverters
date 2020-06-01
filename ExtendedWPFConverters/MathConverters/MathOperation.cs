@@ -41,6 +41,6 @@
         /// <summary>
         /// Absolute value operation
         /// </summary>
-        Abs
+        Absolute
     }
 }
