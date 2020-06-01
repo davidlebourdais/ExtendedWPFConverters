@@ -6,15 +6,20 @@ using System.Windows.Markup;
 namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
-    /// A converter that returns directly the opposite value of <see cref="string.IsNullOrEmpty(string)"/> on a passed string. 
-    /// A 'None' operation can be set to return the actual value of the method.
+    /// A converter that returns the opposite value of <see cref="string.IsNullOrEmpty(string)"/> on a passed string (when
+    /// default values for <see cref="ValueForNotNullOrEmpty"/> and <see cref="ValueForNullOrEmpty"/> are not changed.
     /// </summary>
     public class NotNullOrEmptyStringToBooleanConverter : MarkupExtension, IValueConverter
     {
         /// <summary>
-        /// Specifies the operation to be applied with the converter.
+        /// Value to be applied when converted string is not null nor empty.
         /// </summary>
-        public ReducedBooleanOperation Operation { get; set; } = ReducedBooleanOperation.None;
+        public bool ValueForNotNullOrEmpty { get; set; } = true;
+
+        /// <summary>
+        /// Value to be applied when converted string is null or empty.
+        /// </summary>
+        public bool ValueForNullOrEmpty { get; set; } = false;
 
         /// <summary>
         /// Returns the opposite value of <see cref="string.IsNullOrEmpty(string)"/> on the passed entry.
@@ -27,8 +32,7 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>A value indicating if the string entry is null or empty or not.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var result = string.IsNullOrEmpty(value as string);
-            return Operation == ReducedBooleanOperation.Not ? result : !result;
+            return string.IsNullOrEmpty(value as string) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
         }
 
         /// <summary>
@@ -41,11 +45,8 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>A string which will not be null or empty depending on the passed value and the current operation.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var is_not_null_or_empty = value is bool casted && casted;
-            var result = is_not_null_or_empty ? "not null nor empty" : null;
-            if (Operation == ReducedBooleanOperation.Not)
-                result = is_not_null_or_empty ? null : "not null nor empty";
-            return result;
+            return ((ValueForNotNullOrEmpty && (value as bool?) == true)
+                || (!ValueForNotNullOrEmpty && (value as bool?) != true)) ?  "not null nor empty" : null;
         }
 
         /// <summary>

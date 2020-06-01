@@ -9,17 +9,17 @@ namespace EMA.ExtendedWPFConverters
     /// <summary>
     /// A converter that converts a string state into a <see cref="Visibility"/> value.
     /// </summary>
-    public class NullOrEmptyStringToVisibilityConverter : MarkupExtension, IValueConverter
+    public class NotNullOrEmptyStringToVisibilityConverter : MarkupExtension, IValueConverter
     {
-        /// <summary>
-        /// Value to be applied when converted string is null or empty.
-        /// </summary>
-        public Visibility ValueForNullOrEmpty { get; set; } = Visibility.Collapsed;
-
         /// <summary>
         /// Value to be applied when converted string is not null nor empty.
         /// </summary>
         public Visibility ValueForNotNullOrEmpty { get; set; } = Visibility.Visible;
+
+        /// <summary>
+        /// Value to be applied when converted string is null or empty.
+        /// </summary>
+        public Visibility ValueForNullOrEmpty { get; set; } = Visibility.Collapsed;
 
         /// <summary>
         /// Returns <see cref="Visibility"/> value that correspond to a string entry state (null or empty so not visible, not null so visible).
@@ -44,7 +44,7 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>A string which will not be null or empty depending on the passed value.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is Visibility casted && casted == ValueForNullOrEmpty ? null : "not null";
+            return value is Visibility casted && casted == ValueForNotNullOrEmpty ? "not null nor empty" : null;
         }
 
         /// <summary>
