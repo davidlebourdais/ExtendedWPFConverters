@@ -13,10 +13,11 @@ namespace EMA.ExtendedWPFConverters
     /// <summary>
     /// Converts an image to an ImageSource for WPF's Image control bindings.
     /// </summary>
-    public class ImageToSourceConverter : MarkupExtension, IValueConverter
+    public class ImageToBitmapImageConverter : MarkupExtension, IValueConverter
     {
         /// <summary>
-        /// Converts a <see cref="Image"/> into a <see cref="BitmapImage"/>.
+        /// Converts an <see cref="System.Drawing.Image"/> into a <see cref="System.Windows.Media.Imaging.BitmapImage"/> that is usable in 
+        /// any WPF <see cref="System.Windows.Controls.Image"/>.
         /// </summary>
         /// <param name="value">A <see cref="Image"/> source entry.</param>
         /// <param name="targetType">Unused.</param>
@@ -58,8 +59,7 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="culture">Unused.</param>
         /// <returns>Nothing.</returns>
         /// <exception cref="NotSupportedException">Thrown if this method is called.</exception>
-        public object ConvertBack(object value, Type targetType,
-            object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotSupportedException();
         }
