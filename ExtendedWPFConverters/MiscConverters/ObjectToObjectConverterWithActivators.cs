@@ -7,13 +7,13 @@ using System.Windows.Markup;
 namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
-    /// Converter that returns first object (values[0]) or null regarding to passed boolean values in the next values[1..n].
+    /// Converter that returns first object (values[0]) or null regarding to passed boolean values in the next values[1..n] called activators.
     /// This is a way to provide object based on bound conditions using multibinding.
     /// </summary>
-    public class ObjectAndBooleansToObjectConverterForMultibinding : MarkupExtension, IMultiValueConverter
+    public class ObjectToObjectConverterWithActivators : MarkupExtension, IMultiValueConverter
     {
         /// <summary>
-        /// Value to be applied when passed boolean enablers are invalid (not that providing
+        /// Value to be applied when passed boolean activators are invalid (not that providing
         /// no boolean is considered as a valid input).
         /// </summary>
         public object ValueForInvalid { get; set; } = null;
@@ -21,10 +21,10 @@ namespace EMA.ExtendedWPFConverters
         /// <summary>
         /// Boolean operation to be applied during conversion.
         /// </summary>
-        public BooleanOperation OperationForEnablers { get; set; } = BooleanOperation.And;
+        public BooleanOperation ActivationOperation { get; set; } = BooleanOperation.And;
 
         /// <summary>
-        /// Returns first passed object depending on a boolean operation applied to remaining boolean entries caller 'enablers'.
+        /// Returns first passed object depending on a boolean operation applied to remaining boolean entries called 'activators'.
         /// </summary>
         /// <param name="values">Should contain the object to be returned in first position, then a set of boolean entries to be evaluated through a boolean operation.</param>
         /// <param name="targetType">Unused.</param>
@@ -40,35 +40,35 @@ namespace EMA.ExtendedWPFConverters
             if (!values.Skip(1).All(x => x is bool))
                 return ValueForInvalid;
 
-            var new_values = values.Skip(1).Cast<bool>();
+            var activators = values.Skip(1).Cast<bool>();
 
-            switch(OperationForEnablers)
+            switch(ActivationOperation)
             {
                 case BooleanOperation.Equality:
-                    return new_values.All(x => x == new_values.First()) ? values[0] : null;
+                    return activators.All(x => x == activators.First()) ? values[0] : null;
 
                 case BooleanOperation.None:
                 case BooleanOperation.And:
-                    return new_values.Any(x => x == false) ? null : values[0];
+                    return activators.Any(x => x == false) ? null : values[0];
 
                 case BooleanOperation.Or:
-                    return new_values.Any(x => x == true) ? values[0] : null;
+                    return activators.Any(x => x == true) ? values[0] : null;
 
                 case BooleanOperation.Xor:
-                    return new_values.Count(x => x == true) % 2 == 1 ? values[0] : null;
+                    return activators.Count(x => x == true) % 2 == 1 ? values[0] : null;
 
                 case BooleanOperation.Not:
                 case BooleanOperation.Nand:
-                    return new_values.Any(x => x == false) ? values[0] : null;
+                    return activators.Any(x => x == false) ? values[0] : null;
 
                 case BooleanOperation.Nor:
-                    return new_values.Any(x => x == true) ? null : values[0];
+                    return activators.Any(x => x == true) ? null : values[0];
 
                 case BooleanOperation.Xnor:
-                    return new_values.Count(x => x == true) % 2 == 1 ? null : values[0];
+                    return activators.Count(x => x == true) % 2 == 1 ? null : values[0];
 
                 default:
-                    throw new NotSupportedException(OperationForEnablers.ToString() + " is not supported for " + nameof(ObjectAndBooleansToObjectConverterForMultibinding) + ".");
+                    throw new NotSupportedException(ActivationOperation.ToString() + " is not supported for " + nameof(ObjectToObjectConverterWithActivators) + ".");
             }
         }
 

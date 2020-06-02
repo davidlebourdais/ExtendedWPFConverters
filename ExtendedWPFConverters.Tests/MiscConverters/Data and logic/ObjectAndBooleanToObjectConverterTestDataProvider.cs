@@ -8,7 +8,7 @@ namespace EMA.ExtendedWPFConverters.Tests.Data
     /// Provides data to be used to data-driven tests on ObjectAndBooleanToObjectConverter
     /// with some test logic to verify mathematical operations.
     /// </summary>
-    public static class ObjectAndBooleanToObjectConverterTestDataProvider
+    public static class ObjectToObjectWithActivatorsTestDataProvider
     {
         #region Test helpers
         public static bool Operate(BooleanOperation operation, bool[] values)

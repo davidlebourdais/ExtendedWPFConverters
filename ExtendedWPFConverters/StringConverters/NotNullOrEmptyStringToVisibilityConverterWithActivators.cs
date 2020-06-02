@@ -9,9 +9,9 @@ using System.Windows.Markup;
 namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
-    /// Converts a string coupled to a set of optional booleans (enablers) to a visibility value.
+    /// Converts a string coupled to a set of optional booleans (activators) to a visibility value.
     /// </summary>
-    public class NotNullOrEmptyToVisibilityConverterForMultibinding : MarkupExtension, IMultiValueConverter
+    public class NotNullOrEmptyStringToVisibilityConverterWithActivators : MarkupExtension, IMultiValueConverter
     {
         /// <summary>
         /// Value to be applied when converted string is not null nor empty.
@@ -24,7 +24,7 @@ namespace EMA.ExtendedWPFConverters
         public Visibility ValueForNullOrEmpty { get; set; } = Visibility.Collapsed;
         
         /// <summary>
-        /// Value to be applied when passed boolean enablers are invalid (not that providing
+        /// Value to be applied when passed boolean activators are invalid (not that providing
         /// no boolean is considered as a valid input).
         /// </summary>
         public Visibility ValueForInvalid { get; set; } = Visibility.Collapsed;
@@ -32,7 +32,7 @@ namespace EMA.ExtendedWPFConverters
         /// <summary>
         /// Operation to be used accross the multiple bound values.
         /// </summary>
-        public BooleanOperation OperationForEnablers { get; set; } = BooleanOperation.And;
+        public BooleanOperation ActivationOperation { get; set; } = BooleanOperation.And;
 
         /// <summary>
         /// Converts a string and passed booleans to a visibility value regarding to whether the string is null or empty and the 
@@ -53,11 +53,11 @@ namespace EMA.ExtendedWPFConverters
 
             // Other values will be booleans that will activate or not the output regarding to
             // the boolean operation that is set:
-            var enablers = new List<bool>();
+            var activators = new List<bool>();
             for(int i = 1; i < values.Length; i++)
             {
                 if (values[i] is bool casted)
-                    enablers.Add(casted);
+                    activators.Add(casted);
                 else return ValueForInvalid;
             }
 
@@ -66,30 +66,30 @@ namespace EMA.ExtendedWPFConverters
                 return ValueForNullOrEmpty;
 
             // Do not process anymore if no inputs were provided.
-            if (enablers.Count == 0)  
+            if ( activators.Count == 0)  
                 return ValueForNotNullOrEmpty; 
 
             // Fully process otherwise:
-            switch (OperationForEnablers)
+            switch (ActivationOperation)
             {
                 case  BooleanOperation.Equality:
-                    return enablers.Skip(1).Any(x => x != enablers.First()) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                    return activators.Skip(1).Any(x => x != activators.First()) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 case BooleanOperation.None:
                 case BooleanOperation.And:
-                    return enablers.Any(x => x == false) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                    return activators.Any(x => x == false) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 case BooleanOperation.Not:
                 case  BooleanOperation.Nand:
-                    return enablers.All(x => x == true) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                    return activators.All(x => x == true) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 case BooleanOperation.Or:
-                    return enablers.All(x => x == false) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                    return activators.All(x => x == false) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 case BooleanOperation.Nor:
-                    return enablers.Any(x => x == true) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                    return activators.Any(x => x == true) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 case BooleanOperation.Xor:
-                    return (enablers.Count(x => x == true) % 2 == 0) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                    return ( activators.Count(x => x == true) % 2 == 0) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 case BooleanOperation.Xnor:
-                    return (enablers.Count(x => x == true) % 2 == 1) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                    return ( activators.Count(x => x == true) % 2 == 1) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 default:
-                    throw new NotSupportedException(OperationForEnablers.ToString() + " is not supported for " + nameof(NotNullOrEmptyToVisibilityConverterForMultibinding) + ".");
+                    throw new NotSupportedException(ActivationOperation.ToString() + " is not supported for " + nameof(NotNullOrEmptyStringToVisibilityConverterWithActivators) + ".");
             }
         }
 

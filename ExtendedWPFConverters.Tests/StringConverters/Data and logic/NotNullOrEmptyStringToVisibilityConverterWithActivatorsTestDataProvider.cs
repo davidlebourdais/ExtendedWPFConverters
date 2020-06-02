@@ -9,7 +9,7 @@ namespace EMA.ExtendedWPFConverters.Tests.Data
     /// Provides data to be used to data-driven tests on NotNullOrEmptyString converters
     /// with some test logic to verify mathematical operations.
     /// </summary>
-    public static class NotNullOrEmptyStringToVisibilityTestDataProvider
+    public static class NotNullOrEmptyStringToVisibilityConverterWithActivatorsTestDataProvider
     {
         #region Test helpers
         public static bool Operate(BooleanOperation operation, bool[] values)
