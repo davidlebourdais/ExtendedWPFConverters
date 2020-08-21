@@ -14,7 +14,7 @@ namespace EMA.ExtendedWPFConverters
         /// <summary>
         /// Default value to be returned in case color is not valid.
         /// </summary>
-        public SolidColorBrush Default { get; set; } = new SolidColorBrush(Color.FromArgb(255, 43, 116, 240));
+        public SolidColorBrush Default { get; set; } = Brushes.Black;
 
         /// <summary>
         /// Converts a <see cref="Color"/> into a <see cref="SolidColorBrush"/>.
