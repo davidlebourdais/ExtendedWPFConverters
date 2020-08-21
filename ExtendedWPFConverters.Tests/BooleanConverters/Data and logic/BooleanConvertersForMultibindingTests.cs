@@ -47,55 +47,6 @@ namespace EMA.ExtendedWPFConverters.Tests
         }
         #endregion
 
-        #region BooleanToNullOrObjectConverterForMultibinding
-        public class NullOrObjectTestData
-        {            
-            private static IEnumerable<object> TestObjects = new List<object>() 
-            {
-                "test", 123, true, TimeSpan.FromDays(1), new List<string>(), null
-            };
-
-            public static IEnumerable<object[]> ConvertTestData => MakeConvertTestData();
-
-            private static List<object[]> MakeConvertTestData()
-            {
-                var toReturn = new List<object[]>();
-                foreach (var operation in BooleanConverterBaseForMultibindingTestData<object>.Operations)  // combine operations
-                    foreach (var objectInput in TestObjects)  // with test oject at first position
-                        foreach (var input in BooleanConverterBaseForMultibindingTestData<object>.Inputs) // then bool inputs
-                        {
-                            var data = new List<object>();
-                            data.Add(objectInput);
-                            foreach (var subinput in input)
-                                data.Add(subinput);
-                            toReturn.Add(new object[] {data, operation });
-                        } 
-                return toReturn;
-            }
-        }
-
-        [Theory]
-        [MemberData(nameof(NullOrObjectTestData.ConvertTestData), MemberType= typeof(NullOrObjectTestData))]
-        public void ConvertsNullOrObjectAndBooleanToNullOrObject(object[] inputs, BooleanOperation operation)
-        {
-            var converter = new BooleanToNullOrObjectConverterForMultibinding() { Operation = operation };
-            var result = converter.Convert(inputs, typeof(object), null, null);
-            
-            if (inputs.Length > 0)
-            {
-                var boolInputs = inputs.Skip(1);
-                if (boolInputs.All(x => x is bool))
-                {
-                    var subResult = Operate(operation, boolInputs.Where(x => x is bool).Cast<bool>().ToArray());
-                    if (subResult)
-                        Assert.Equal(inputs[0], result);
-                    else Assert.Null(result);
-                } else Assert.Null(result);
-            }
-            else Assert.Null(result);
-        }
-        #endregion
-
         #region BooleanToVisibilityConverterForMultibinding
         public class VisibilityTestData : BooleanConverterBaseForMultibindingTestData<Visibility>
         {            
