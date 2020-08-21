@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Xunit;
 using System.Collections;
@@ -8,6 +9,38 @@ namespace EMA.ExtendedWPFConverters.Tests
 {
     public class CollectionConvertersForMultibindingTests
     {
+		#region CollectionCountConverter
+        public static IEnumerable<object[]> CollectionFirstItemData => new List<object[]>
+        {
+            new object[] { new object[] { new List<object>() { 1, 2, 3}}, false },
+            new object[] { new object[] { new List<object>() { 1, 2, 3}}, true },
+            new object[] { new object[] { "test" }, false },
+            new object[] { new object[] { "test" }, true },
+            new object[] { new object[] { "test1", "test2", "test3" }, false },
+            new object[] { new object[] { new TimeSpan(), 123, 2.0d, "test" }, false },
+            new object[] { new object[] { }, false },
+            new object[] { new object[] { null }, false },
+            new object[] { new object[] { null }, true },
+            new object[] { new object[] { null, null, null }, false },
+        };
+
+        [Theory]
+        [MemberData(nameof(CollectionFirstItemData))]
+        public void ConvertsCollectionToFirstItem(object[] inputs, bool as_ienumerable)
+        {
+            var converter = new EMA.ExtendedWPFConverters.CollectionFirstItemConverterForMultiBinding() { AsIEnumerable = as_ienumerable };
+            var result = converter.Convert(inputs, typeof(Color), null, null);
+            if (inputs.Any() && (as_ienumerable && inputs.First() is IEnumerable<object> || !as_ienumerable))
+            {
+                if (as_ienumerable)
+                    Assert.Equal((inputs.First() as IEnumerable<object>).First(), result);
+                else
+                    Assert.Equal(inputs.First(), result);
+            }
+            else Assert.Null(result);
+        }
+        #endregion
+
         #region CollectionIndexOfConverterForMultiBinding
         public static IEnumerable<object[]> CollectionIndexOfData => new List<object[]>
         {
