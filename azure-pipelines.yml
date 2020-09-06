@@ -1,0 +1,201 @@
+name: $(SourceBranchName)-$(Date:yyyyMMdd)$(Rev:.r)
+
+pool:
+  vmImage: 'windows-latest'
+
+trigger:
+  tags:
+    include:
+    - v*
+  branches:
+    include:
+    - master
+
+pr:
+- master
+
+jobs:
+- job: BuildAndTest
+  displayName: 'Build and test'
+
+  steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore all'
+      inputs:
+        command: restore
+        projects: '**/*.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build all'
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--configuration Release --no-restore'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Test'
+      condition: succeeded()
+      inputs:  
+        command: 'test'
+        projects: '**/*.Tests/*.csproj'
+        arguments: '--configuration Release --no-build --collect "Code coverage"'
+        testRunTitle: 'Test all'
+        publishTestResults: true
+
+- job: PublishArtifact
+  displayName: 'Package creation'
+  dependsOn: BuildAndTest
+  condition: succeeded()
+  
+  variables: 
+    lastOrCurrentVersionTag: '' 
+    nightlyBuildVersion: 'unset'
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags/v') }}:
+      isReleaseTagBranch: true
+
+  steps: 
+    - task: PowerShell@2
+      displayName: 'Get last tag version'
+      inputs:
+        targetType: 'inline'
+        script: |
+          Try {
+            $LastTag = git describe --tags
+          }
+          Catch { }
+          Finally {
+            if (!$LastTag) {
+              if ($env:isForRelease) {}
+              $LastTag = 'v0.0.0'
+            }
+            Write-Host "##vso[task.setvariable variable=lastOrCurrentVersionTag]$LastTag"
+            echo "Last branch tag is: $LastTag"
+          }
+        ignoreLASTEXITCODE: true
+
+    - task: PowerShell@2
+      displayName: 'Check tag version match'
+      condition: variables['isReleaseTagBranch']
+      env:
+        LastTag: $(lastOrCurrentVersionTag)
+      inputs:
+        targetType: 'inline'
+        errorActionPreference: 'silentlyContinue'
+        script: |
+          Try {
+            $ProjectTag = Get-ChildItem -Path . -Include *.csproj -Exclude *.*Tests*.csproj -Recurse |
+                          Select-Xml -XPath "/Project/PropertyGroup/Version" |
+                          Select-Object -Property @{Name="Version"; Expression={$_.Node.InnerXml}} |
+                          Select-Object -ExpandProperty Version |
+                          Select-Object -First 1
+            echo "Project file version definition is: $ProjectTag"
+          }
+          Catch {
+              Write-Host "##vso[task.LogIssue type=error;]No 'Version' defined in project's .csproj file"
+              Write-Host "##vso[task.complete result=Failed;]No project version"
+          }
+          $LastTag = $env:LastTag.TrimStart('v')
+          if ($ProjectTag -ne $LastTag) {
+            Write-Host "##vso[task.LogIssue type=error;]Project 'Version' property in .csproj does not match release tag version"
+            Write-Host "##vso[task.complete result=Failed;]Version does not match"
+          }
+        ignoreLASTEXITCODE: true
+
+    - task: PowerShell@2
+      displayName: 'Create nightly build version tag'
+      condition: not(variables['isReleaseTagBranch'])
+      env:
+        CurrentBuildID: $(Build.BuildNumber) # date is expanded at the top and then put in BuildNumber
+        LastTag: $(lastOrCurrentVersionTag)
+      inputs:
+        targetType: 'inline'
+        script: |
+          $LastTag = $env:LastTag.TrimStart('v')
+          $Suffix = $env:CurrentBuildID.Substring($env:CurrentBuildID.LastIndexOf('-'))
+          $NightlyBuildVersion = $LastTag + $Suffix
+          Write-Host "##vso[task.setvariable variable=nightlyBuildVersion]$NightlyBuildVersion"
+          echo "Nightly build version is: $ProjectTag"
+        ignoreLASTEXITCODE: true
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Pack nightly build'
+      condition: not(variables['isReleaseTagBranch'])
+      inputs:
+        command: 'pack'
+        packagesToPack: '**/*.csproj;!**/*.Tests*.csproj'
+        includesymbols: true
+        includesource: true
+        configuration: 'Release'
+        versioningScheme: byEnvVar
+        versionEnvVar: nightlyBuildVersion
+        verbosityRestore: Minimal
+        verbosityPack: Normal
+
+    - task: PowerShell@2
+      displayName: 'Get and write nightly changelog diff'
+      condition: not(variables['isReleaseTagBranch'])
+      inputs:
+        filePath: 'getchangelogdiff.ps1'
+        arguments: '-TagVersion Unreleased -ChangeLogFilePath CHANGELOG.md -ChangeLogDiffWritePath $(Build.ArtifactStagingDirectory)\ChangeLogDiff.md'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Pack new release'
+      condition: variables['isReleaseTagBranch']
+      inputs:
+        command: 'pack'
+        packagesToPack: '**/*.csproj;!**/*.Tests*.csproj'
+        configuration: 'Release'
+        verbosityRestore: Minimal
+        verbosityPack: Normal
+
+    - task: PowerShell@2
+      displayName: 'Get and write release changelog diff'
+      condition: variables['isReleaseTagBranch']
+      inputs:
+        filePath: 'getchangelogdiff.ps1'
+        arguments: '-TagVersion $(lastOrCurrentVersionTag) -ChangeLogFilePath CHANGELOG.md -ChangeLogDiffWritePath $(Build.ArtifactStagingDirectory)\ChangeLogDiff.md'
+    
+    - task: CopyFiles@2
+      displayName: 'Prepare files to archive'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: '**'
+        TargetFolder: '$(Agent.BuildDirectory)\ExtendedWPFVisualTreeHelper'
+        CleanTargetFolder: true
+        OverWrite: true
+
+    - task: DeleteFiles@1
+      displayName: 'Delete git history from archive'
+      inputs:
+        SourceFolder: '$(Agent.BuildDirectory)/ExtendedWPFVisualTreeHelper'
+        Contents: '.git'
+
+    - task: ArchiveFiles@2
+      displayName: 'Archive source as .zip'
+      inputs:
+        rootFolderOrFile: '$(Agent.BuildDirectory)/ExtendedWPFVisualTreeHelper'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/source.zip'
+        replaceExistingArchive: true
+
+    - task: ArchiveFiles@2
+      displayName: 'Archive source as .tar.gz'
+      inputs:
+        rootFolderOrFile: '$(Agent.BuildDirectory)/ExtendedWPFVisualTreeHelper'
+        includeRootFolder: true
+        archiveType: 'tar'
+        tarCompression: 'gz'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/source.tar.gz'
+        replaceExistingArchive: true
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish package and archive'
+      condition: succeeded()
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        publishLocation: Container
+        ${{ if variables['isReleaseTagBranch'] }}:
+          ArtifactName: 'prod'
+        ${{ if not(variables['isReleaseTagBranch']) }}:
+          ArtifactName: 'dev'
