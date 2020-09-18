@@ -50,7 +50,7 @@ All converters are supplied for one, two or three of the above families. Availab
 |Object|NotNullToVisibilityConverter|!=null|Visibility|Yes|No|No
 |String|NotNullOrEmptyStringToBooleanConverter|!=null and !=empty|Bool|Yes|No|No
 |String|NotNullOrEmptyStringToVisibilityConverter|!=null and !=empty|Bool|Yes|No|Yes
-
+|String|StringToHorizontalAlignmentConverter|   |HorizontalAlignment|Yes|No|No
 
 ## How to use
 Alway invoke the library in your xaml header definition:
@@ -172,6 +172,7 @@ Performs a mathematical operation over a single input and the converter paramete
     <RotateTransform Angle="{Binding SomeRadValue, Converter={extconv:MathConverter, Operation=Multiply}, ConverterParameter=57.2958}"/>
 
 **About**
+
 Originally inspired by [MaterialDesignInXamlToolkit](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)'s MathConverter
 
 ### Misc. converters 
@@ -198,7 +199,9 @@ Converts the input null state into a Visibility value.
 
     <ContentControl Visibility="{Binding SomeViewModel, Converter={extconv:NotNullToVisibilityConverter ValueForNull=Visibility.Hidden}}" />
 
-### String converters (NotNullOrEmptyStringToXXXXConverter)
+### String converters
+
+#### NotNullOrEmptyStringToXXXXConverter
 Returns a result depending on the state of a passed string (if null or empty).
 
 **Parameters**
@@ -208,6 +211,20 @@ Returns a result depending on the state of a passed string (if null or empty).
 **Example**
 
     <TextBox Text="{Binding SomeText}" Visibility="{Binding SomeText, Converter={extconv:NotNullOrEmptyStringToVisibilityConverter}}" />
+
+#### StringToHorizontalAlignmentConverter
+Parses a string to produce an alignment horizontal value. Returns null if parsing fails.
+
+**Example**
+
+    <ComboBox SelectedIndex="0" HorizontalAlignment="{Binding SelectedItem.Content, RelativeSource={RelativeSource Mode=Self}, Converter={extconv:StringToHorizontalAlignmentConverter}}">
+	    <ComboBoxItem Content="Left" />
+	    <ComboBoxItem Content="Right" />
+    </ComboBox>
+
+**Note**
+
+> This converter supports bidirectional string translations when a proper translation fetcher is provided as converter parameter and a culture information is set for the application. See the list of accepted types for this fetcher in the documentation of the [CheckFetcherFormat method](ExtendedWPFConverters/StringConverters/Utils/StringTranslationHelper.cs).
 
 ## That's it!
 Hope you will enjoy these converters!
