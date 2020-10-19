@@ -39,6 +39,7 @@ function Get-Text-File-Part([String] $path, [String] $start_pattern, [String] $s
 $ChangeLogMessage = ""
 $VersionTagRegex = "v\d+\.\d+\.\d+(\s|-|$)"
 $ChangeLogHeaderRegex = "#+ v\d+\.\d+\.\d+(\s|-|$)"
+$invalid_current_tag = $false
 
 if ([System.String]::IsNullOrWhiteSpace($TagVersion)) {
     Write-Host "##vso[task.LogIssue type=error;]Tag version is not provided"
@@ -49,6 +50,7 @@ else {
         if (-not($TagVersion -match $VersionTagRegex)) {
             Write-Host "Warning: Passed tag version has an invalid format, processing it anyway to get 'non release' changelog"
             $CurrentReleaseLogRegex = "#+ " + $TagVersion.Replace(".", "\.") + ".*$"
+            $invalid_current_tag = $true
         }
         $ChangeLogMessage = Get-Text-File-Part $ChangeLogFilePath $CurrentReleaseLogRegex $ChangeLogHeaderRegex
 
@@ -60,9 +62,12 @@ else {
                 Out-File -FilePath $ChangeLogDiffWritePath -InputObject $ChangeLogMessage -Encoding ASCII
             }
         }
-        else {
+        elseif (-not($invalid_current_tag)) { 
             Write-Host "##vso[task.LogIssue type=warning;]No changelog message found for passed tag version"
             Write-Host "##vso[task.complete result=SucceededWithIssues;]No specific changelog"
+        }
+        else { #no warning if no or bad tag was passed to not make build fail
+            Write-Host "Warning: Bad passed tag version and no draft changelog message found"
         }
     } 
     else {

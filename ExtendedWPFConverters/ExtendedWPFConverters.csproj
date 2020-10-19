@@ -4,10 +4,11 @@
     <PackageId>ExtendedWPFConverters</PackageId>
     <Title>Extended WPF converters</Title>
     <PackageDescription>Proposes a list of commonly used converters for WPF.</PackageDescription>
-    <PackageTags>EMA;WPF;Converters</PackageTags>
+    <PackageTags>WPF;Converters</PackageTags>
     <UseWPF>true</UseWPF>
-    <Version>1.0.7</Version>
+    <Version>2.0.0</Version>
     <Authors>David Le Bourdais</Authors>
+	<Copyright>Copyright © 2019-2020</Copyright>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 

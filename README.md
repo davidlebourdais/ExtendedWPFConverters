@@ -1,4 +1,9 @@
 # WPF Extended converters
+
+[![Build Status](https://dev.azure.com/davidlebourdais/ExtendedWPFConverters/_apis/build/status/davidlebourdais.ExtendedWPFConverters?branchName=master)](https://dev.azure.com/davidlebourdais/ExtendedWPFConverters/_build/latest?definitionId=2&branchName=master)
+[![NuGet](https://img.shields.io/nuget/v/ExtendedWPFConverters.svg)](https://www.nuget.org/packages/ExtendedWPFConverters)
+[![Issues](https://img.shields.io/github/issues/davidlebourdais/ExtendedWPFConverters.svg)](https://github.com/davidlebourdais/ExtendedWPFConverters/issues)
+
 Provides a set of commonly used and tested converters to build WPF applications.
 
 ## Notions
@@ -229,3 +234,6 @@ Parses a string to produce an alignment (horizontal or vertical) value. Returns 
 
 ## That's it!
 Hope you will enjoy these converters!
+
+## License
+This work is licensed under the [MIT License](LICENSE.md).
