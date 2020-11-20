@@ -1,14 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.0;net471</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net471</TargetFrameworks>
     <PackageId>ExtendedWPFConverters</PackageId>
     <Title>Extended WPF converters</Title>
     <PackageDescription>Proposes a list of commonly used converters for WPF.</PackageDescription>
     <PackageTags>WPF;Converters</PackageTags>
     <UseWPF>true</UseWPF>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <Authors>David Le Bourdais</Authors>
-	<Copyright>Copyright © 2019-2020</Copyright>
+    <Copyright>Copyright © 2019-2020</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/davidlebourdais/ExtendedWPFConverters</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 

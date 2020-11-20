@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.1
+Updated minimum .Net Core version and package info for better visibility on Nuget feeds.
+
 ## v2.0.0
 Initial version for public release, comprising the following list of unit tested converters:
 - BooleanToBooleanConverter
