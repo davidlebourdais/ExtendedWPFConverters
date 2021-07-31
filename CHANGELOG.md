@@ -1,6 +1,7 @@
 # Changelog
 
 ## v2.0.2
+Updated to .NET 5
 Minor API breaking changes: 
 - BooleanOperation.Xnor -> BooleanOperation.XNor
 - MathOperation.Substract -> MathOperation.Subtract
