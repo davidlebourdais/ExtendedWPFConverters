@@ -16,30 +16,30 @@ namespace EMA.ExtendedWPFConverters.Tests
                     
                 case BooleanOperation.None:
                 case BooleanOperation.And:
-                    return inputs.All(v => v == true);
+                    return inputs.All(v => v);
 
                 case BooleanOperation.Or:
-                    return inputs.Any(v => v == true);
+                    return inputs.Any(v => v);
 
                 case BooleanOperation.Xor:
-                    return inputs.Count(x => x == true) % 2 == 1;
+                    return inputs.Count(v => v) % 2 == 1;
 
                 case BooleanOperation.Not:
                 case BooleanOperation.Nand:
-                    return !inputs.All(v => v == true);
+                    return inputs.Any(v => v != true);
 
                 case BooleanOperation.Nor:
-                    return !inputs.Any(v => v == true);
+                    return inputs.All(v => v != true);
 
-                case BooleanOperation.Xnor:
-                    return inputs.Count(x => x == true) % 2 == 0;
+                case BooleanOperation.XNor:
+                    return inputs.Count(v => v) % 2 == 0;
 
                 default:
-                    throw new NotSupportedException("'" + operation.ToString() + "' operation is not supported for " + nameof(BooleanToVisibilityConverterForMultibinding) + ".");
+                    throw new NotSupportedException("'" + operation + "' operation is not supported for " + nameof(BooleanToVisibilityConverterForMultibinding) + ".");
             }
         }
 
-        protected void TestConversion<T>(BooleanConverterBaseForMultibinding<T> converter, object[] inputs, T valueForTrue, T valueForFalse, T valueForInvalid, BooleanOperation operation)
+        protected static void TestConversion<T>(BooleanConverterBaseForMultibinding<T> converter, object[] inputs, T valueForTrue, T valueForFalse, T valueForInvalid, BooleanOperation operation)
         {
             converter.ValueForTrue = valueForTrue;
             converter.ValueForFalse = valueForFalse;
@@ -50,13 +50,11 @@ namespace EMA.ExtendedWPFConverters.Tests
             
             if (inputs != null)
             {
-                var casted = inputs.Where(x => x is bool).Cast<bool>();
-                if (casted.Count() == inputs.Length)  // if all are bools.
+                var casted = inputs.Where(x => x is bool).Cast<bool>().ToArray();
+                if (casted.Length == inputs.Length)  // if all are booleans.
                 {
                     var expected = Operate(operation, casted.ToArray());
-                    if (expected)
-                        Assert.Equal(valueForTrue, result);
-                    else Assert.Equal(valueForFalse, result);
+                    Assert.Equal(expected ? valueForTrue : valueForFalse, result);
                 }
                 else Assert.Equal(valueForInvalid, result);
             }
@@ -66,7 +64,7 @@ namespace EMA.ExtendedWPFConverters.Tests
         #region Base for data sets
         public abstract class BooleanConverterBaseForMultibindingTestData<TResult>
         {
-            public static List<object[]> Inputs = new List<object[]>() 
+            private static readonly List<object[]> _inputs = new List<object[]>
             { 
                 new object[] { false },
                 new object[] { true },
@@ -98,7 +96,8 @@ namespace EMA.ExtendedWPFConverters.Tests
                 new object[] { null, null },
                 new object[] { "invalid", "invalid" }, 
             };
-            public static List<BooleanOperation> Operations = Enum.GetValues(typeof(BooleanOperation)).Cast<BooleanOperation>().ToList();
+
+            private static readonly List<BooleanOperation> _operations = Enum.GetValues(typeof(BooleanOperation)).Cast<BooleanOperation>().ToList();
 
             public static IEnumerable<object[]> ConvertTestData => GenerateConvertTestData(null);
 
@@ -106,12 +105,12 @@ namespace EMA.ExtendedWPFConverters.Tests
             {
                 var toReturn = new List<object[]>();
 
-                foreach (var input in Inputs)
-                    foreach (var operation in Operations)
+                foreach (var input in _inputs)
+                    foreach (var operation in _operations)
                     {
                         if (defaultValues != null)
-                            foreach (var defaultValueSet in defaultValues)
-                                toReturn.Add(new object[] { input, defaultValueSet.Item1, defaultValueSet.Item2, defaultValueSet.Item3, operation });
+                            foreach (var (item1, item2, item3) in defaultValues)
+                                toReturn.Add(new object[] { input, item1, item2, item3, operation });
 
                         // Add null inputs for fun or as default:
                         toReturn.Add(new object[] { input, null, null, null, operation });

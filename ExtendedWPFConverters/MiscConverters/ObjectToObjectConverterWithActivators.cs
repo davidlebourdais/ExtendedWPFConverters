@@ -34,41 +34,46 @@ namespace EMA.ExtendedWPFConverters
         /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values.Length == 0) return null;
-            if (values.Length == 1) return values[0];
+            switch (values.Length)
+            {
+                case 0:
+                    return null;
+                case 1:
+                    return values[0];
+            }
 
             if (!values.Skip(1).All(x => x is bool))
                 return ValueForInvalid;
 
-            var activators = values.Skip(1).Cast<bool>();
+            var activators = values.Skip(1).Cast<bool>().ToArray();
 
             switch(ActivationOperation)
             {
                 case BooleanOperation.Equality:
-                    return activators.All(x => x == activators.First()) ? values[0] : null;
+                    return activators.All(x => x == activators[0]) ? values[0] : null;
 
                 case BooleanOperation.None:
                 case BooleanOperation.And:
-                    return activators.Any(x => x == false) ? null : values[0];
+                    return activators.Any(x => !x) ? null : values[0];
 
                 case BooleanOperation.Or:
-                    return activators.Any(x => x == true) ? values[0] : null;
+                    return activators.Any(x => x) ? values[0] : null;
 
                 case BooleanOperation.Xor:
-                    return activators.Count(x => x == true) % 2 == 1 ? values[0] : null;
+                    return activators.Count(x => x) % 2 == 1 ? values[0] : null;
 
                 case BooleanOperation.Not:
                 case BooleanOperation.Nand:
-                    return activators.Any(x => x == false) ? values[0] : null;
+                    return activators.Any(x => !x) ? values[0] : null;
 
                 case BooleanOperation.Nor:
-                    return activators.Any(x => x == true) ? null : values[0];
+                    return activators.Any(x => x) ? null : values[0];
 
-                case BooleanOperation.Xnor:
-                    return activators.Count(x => x == true) % 2 == 1 ? null : values[0];
+                case BooleanOperation.XNor:
+                    return activators.Count(x => x) % 2 == 1 ? null : values[0];
 
                 default:
-                    throw new NotSupportedException(ActivationOperation.ToString() + " is not supported for " + nameof(ObjectToObjectConverterWithActivators) + ".");
+                    throw new NotSupportedException(ActivationOperation + " is not supported for " + nameof(ObjectToObjectConverterWithActivators) + ".");
             }
         }
 
@@ -91,9 +96,6 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
         /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }

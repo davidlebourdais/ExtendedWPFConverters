@@ -14,7 +14,7 @@ namespace EMA.ExtendedWPFConverters
     public class MathConverter : MarkupExtension, IValueConverter
     {
         /// <summary>
-        /// Mathematic operation to be applied.
+        /// Mathematics operation to be applied.
         /// </summary>
         public MathOperation Operation { get; set; }
 
@@ -32,7 +32,7 @@ namespace EMA.ExtendedWPFConverters
         /// Private. Indicates if the input is a double or a string.
         /// </summary>
         /// <remarks>Used only for convert back method.</remarks>
-        private bool InputAsString { get; set; } = false;
+        private bool InputAsString { get; set; }
 
         /// <summary>
         /// Performs a mathematical operation between entry and parameter and returns the result.
@@ -47,13 +47,13 @@ namespace EMA.ExtendedWPFConverters
         {
             InputAsString = value is string;
 
-            if(value == null || !double.TryParse(value.ToString().Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double value1)) 
+            if(value == null || !double.TryParse(value.ToString()?.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var value1)) 
                 return ValueForInvalid;
 
-             // Returns invalid is value2 is invalid, except if not going to use it:
-            double value2 = 0;
+            // Returns invalid is value2 is invalid, except if not going to use it:
+            var value2 = 0.0d;
             if(Operation != MathOperation.None && Operation != MathOperation.Absolute && 
-                (parameter == null || !double.TryParse(parameter.ToString().Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out value2))) 
+                (parameter == null || !double.TryParse(parameter.ToString()?.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out value2))) 
                 return ValueForInvalid;
             
             var result = value1;
@@ -65,10 +65,10 @@ namespace EMA.ExtendedWPFConverters
                 case MathOperation.Add:
                     result = value1 + value2;
                     break;
-                case MathOperation.Substract:
+                case MathOperation.Subtract:
                     result = value1 - value2; 
                     break;
-                case MathOperation.SubstractPositiveOnly:
+                case MathOperation.SubtractPositiveOnly:
                     result = (value1 - value2) > 0 ? (value1 - value2) : 0; 
                     break;
                 case MathOperation.Multiply:
@@ -107,13 +107,17 @@ namespace EMA.ExtendedWPFConverters
             if(value == null)
                 return ValueForInvalid;
 
-            var value1 = 0.0d;
+            double value1;
             try
             {
                 value1 = System.Convert.ToDouble(value, culture ?? CultureInfo.InvariantCulture);
-            } catch { return ValueForInvalid; }
+            }
+            catch
+            {
+                return ValueForInvalid;
+            }
 
-            double value2 = 0;
+            var value2 = 0.0d;
             if(Operation != MathOperation.None && Operation != MathOperation.Absolute)
             {
                 if(parameter == null)
@@ -121,8 +125,11 @@ namespace EMA.ExtendedWPFConverters
                 try
                 {
                     value2 = System.Convert.ToDouble(parameter, culture ?? CultureInfo.InvariantCulture);
-                } catch { return ValueForInvalid; }
-
+                }
+                catch
+                {
+                    return ValueForInvalid;
+                }
             } 
 
             var result = (double?)null;
@@ -135,8 +142,8 @@ namespace EMA.ExtendedWPFConverters
                 case MathOperation.Add:
                     result = value1 - value2;
                     break;
-                case MathOperation.Substract:
-                case MathOperation.SubstractPositiveOnly:
+                case MathOperation.Subtract:
+                case MathOperation.SubtractPositiveOnly:
                     result = value1 + value2;
                     break;
                 case MathOperation.Multiply:
@@ -158,8 +165,7 @@ namespace EMA.ExtendedWPFConverters
 
             if (result != null)
                 return InputAsString ? result.Value.ToString(culture ?? CultureInfo.InvariantCulture) : (object)result;
-            else
-                return ValueForInvalid;
+            return ValueForInvalid;
         }
 
         /// <summary>
@@ -167,9 +173,6 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
         /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }

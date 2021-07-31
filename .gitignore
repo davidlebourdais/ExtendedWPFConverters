@@ -11,6 +11,9 @@ project.lock.json
 .vs/
 *.sln
 
+# Rider
+.idea
+
 # User-specific files
 *.suo
 *.user

@@ -15,13 +15,13 @@
         /// </summary>
         Add,
         /// <summary>
-        /// Difference operation (negative allowed) 
+        /// Difference operation (outputs negative results) 
         /// </summary>
-        Substract,
+        Subtract,
         /// <summary>
-        /// Difference operation (negative not allowed)
+        /// Difference operation (outputs 0 when result is negative)
         /// </summary>
-        SubstractPositiveOnly,
+        SubtractPositiveOnly,
         /// <summary>
         /// Product operation
         /// </summary>

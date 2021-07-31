@@ -30,7 +30,7 @@ namespace EMA.ExtendedWPFConverters
         public Visibility ValueForInvalid { get; set; } = Visibility.Collapsed;
 
         /// <summary>
-        /// Operation to be used accross the multiple bound values.
+        /// Operation to be used across the multiple bound values.
         /// </summary>
         public BooleanOperation ActivationOperation { get; set; } = BooleanOperation.And;
 
@@ -76,20 +76,20 @@ namespace EMA.ExtendedWPFConverters
                     return activators.Skip(1).Any(x => x != activators.First()) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 case BooleanOperation.None:
                 case BooleanOperation.And:
-                    return activators.Any(x => x == false) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                    return activators.Any(x => !x) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 case BooleanOperation.Not:
                 case  BooleanOperation.Nand:
-                    return activators.All(x => x == true) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                    return activators.All(x => x) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 case BooleanOperation.Or:
-                    return activators.All(x => x == false) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                    return activators.All(x => !x) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 case BooleanOperation.Nor:
-                    return activators.Any(x => x == true) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                    return activators.Any(x => x) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 case BooleanOperation.Xor:
-                    return ( activators.Count(x => x == true) % 2 == 0) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
-                case BooleanOperation.Xnor:
-                    return ( activators.Count(x => x == true) % 2 == 1) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                    return ( activators.Count(x => x) % 2 == 0) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
+                case BooleanOperation.XNor:
+                    return ( activators.Count(x => x) % 2 == 1) ? ValueForNullOrEmpty : ValueForNotNullOrEmpty;
                 default:
-                    throw new NotSupportedException(ActivationOperation.ToString() + " is not supported for " + nameof(NotNullOrEmptyStringToVisibilityConverterWithActivators) + ".");
+                    throw new NotSupportedException(ActivationOperation + " is not supported for " + nameof(NotNullOrEmptyStringToVisibilityConverterWithActivators) + ".");
             }
         }
 
@@ -112,9 +112,6 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
         /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }

@@ -19,10 +19,8 @@ namespace EMA.ExtendedWPFConverters.Tests
         {
             var converter = new NotNullOrEmptyStringToBooleanConverter() { ValueForNotNullOrEmpty = valueForNotNullOrEmpty, ValueForNullOrEmpty = valueForNullOrEmpty };
             var result = converter.Convert(input, typeof(string), null, null);
-            if (!string.IsNullOrEmpty(input as string))
-                Assert.Equal(valueForNotNullOrEmpty, result);
-            else
-                Assert.Equal(valueForNullOrEmpty, result);
+            
+            Assert.Equal(!string.IsNullOrEmpty(input as string) ? valueForNotNullOrEmpty : valueForNullOrEmpty, result);
         }
 
         [Theory]
@@ -39,8 +37,11 @@ namespace EMA.ExtendedWPFConverters.Tests
         {
             var converter = new NotNullOrEmptyStringToBooleanConverter() { ValueForNotNullOrEmpty = valueForNotNullOrEmpty, ValueForNullOrEmpty = valueForNullOrEmpty };
             var result = converter.ConvertBack(input, typeof(bool), null, null);
-            if ((input as bool?) == valueForNotNullOrEmpty)
+            if (input as bool? == valueForNotNullOrEmpty)
+            {
+                Assert.NotNull(result as string);
                 Assert.NotEmpty(result as string);
+            }
             else
                 Assert.Null(result);
         }
@@ -68,10 +69,8 @@ namespace EMA.ExtendedWPFConverters.Tests
         {
             var converter = new NotNullOrEmptyStringToVisibilityConverter() { ValueForNotNullOrEmpty = valueForNotNullOrEmpty, ValueForNullOrEmpty = valueForNullOrEmpty };
             var result = converter.Convert(input, typeof(string), null, null);
-            if (!string.IsNullOrEmpty(input as string))
-                Assert.Equal(valueForNotNullOrEmpty, result);
-            else
-                Assert.Equal(valueForNullOrEmpty, result);
+            
+            Assert.Equal(!string.IsNullOrEmpty(input as string) ? valueForNotNullOrEmpty : valueForNullOrEmpty, result);
         }
 
         [Theory]
@@ -88,8 +87,11 @@ namespace EMA.ExtendedWPFConverters.Tests
         {
             var converter = new NotNullOrEmptyStringToVisibilityConverter() { ValueForNotNullOrEmpty = valueForNotNullOrEmpty, ValueForNullOrEmpty = valueForNullOrEmpty };
             var result = converter.ConvertBack(input, typeof(Visibility), null, null);
-            if ((input as Visibility?) == valueForNotNullOrEmpty)
+            if (input as Visibility? == valueForNotNullOrEmpty)
+            {
+                Assert.NotNull(result as string);
                 Assert.NotEmpty(result as string);
+            }
             else
                 Assert.Null(result);
         }

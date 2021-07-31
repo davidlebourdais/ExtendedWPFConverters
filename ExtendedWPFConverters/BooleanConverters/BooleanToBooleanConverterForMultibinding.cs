@@ -1,7 +1,7 @@
 ﻿namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
-    /// A converter for multiboolean operations to be used with multibindings.
+    /// A converter for multi-boolean operations to be used with MultiBinding.
     /// </summary>
     public class BooleanToBooleanConverterForMultibinding : BooleanConverterBaseForMultibinding<bool>
     {

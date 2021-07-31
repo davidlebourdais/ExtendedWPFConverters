@@ -26,16 +26,13 @@ namespace EMA.ExtendedWPFConverters.Tests
 
         [Theory]
         [MemberData(nameof(CollectionFirstItemData))]
-        public void ConvertsCollectionToFirstItem(object[] inputs, bool as_ienumerable)
+        public void ConvertsCollectionToFirstItem(object[] inputs, bool asIEnumerable)
         {
-            var converter = new EMA.ExtendedWPFConverters.CollectionFirstItemConverterForMultiBinding() { AsIEnumerable = as_ienumerable };
+            var converter = new CollectionFirstItemConverterForMultiBinding() { AsIEnumerable = asIEnumerable };
             var result = converter.Convert(inputs, typeof(Color), null, null);
-            if (inputs.Any() && (as_ienumerable && inputs.First() is IEnumerable<object> || !as_ienumerable))
+            if (inputs.Any() && (asIEnumerable && inputs.First() is IEnumerable<object> || !asIEnumerable))
             {
-                if (as_ienumerable)
-                    Assert.Equal((inputs.First() as IEnumerable<object>).First(), result);
-                else
-                    Assert.Equal(inputs.First(), result);
+                Assert.Equal(asIEnumerable ? (inputs.First() as IEnumerable<object>)?.First() : inputs.First(), result);
             }
             else Assert.Null(result);
         }
@@ -88,16 +85,15 @@ namespace EMA.ExtendedWPFConverters.Tests
 
         [Theory]
         [MemberData(nameof(CollectionIndexOfData))]
-        public void ConvertsCollectionToIndexOf(object[] inputs, bool output_as_string, int value_for_not_found, string value_string_for_not_found, 
-                                                                 int value_for_invalid, string value_string_for_invalid)
+        public void ConvertsCollectionToIndexOf(object[] inputs, bool outputAsString, int valueForNotFound, string valueStringForNotFound, int valueForInvalid, string valueStringForInvalid)
         {
             var converter = new CollectionIndexOfConverterForMultiBinding() 
             { 
-                OutputAsString = output_as_string,
-                ValueForNotFound = value_for_not_found,
-                ValueStringForNotFound = value_string_for_not_found,
-                ValueForInvalid = value_for_invalid,
-                ValueStringForInvalid = value_string_for_invalid
+                OutputAsString = outputAsString,
+                ValueForNotFound = valueForNotFound,
+                ValueStringForNotFound = valueStringForNotFound,
+                ValueForInvalid = valueForInvalid,
+                ValueStringForInvalid = valueStringForInvalid
             };
 
             var result = converter.Convert(inputs, typeof(Color), null, null);
@@ -105,36 +101,36 @@ namespace EMA.ExtendedWPFConverters.Tests
             if (inputs.First() is IEnumerable asEnumerable && inputs.Length > 1 && inputs[1] != null)
             {
                 var count = 0;
-                var stopped = false;
+                bool stopped;
                 var found = false;
                 var enumerator = asEnumerable.GetEnumerator();
                 enumerator.Reset();
                 do
                 {
                     stopped = !enumerator.MoveNext();
-                    if (!stopped && enumerator.Current.Equals(inputs[1]))
+                    if (!stopped && enumerator.Current?.Equals(inputs[1]) == true)
                         found = true;
                     else count++;
                 } while (!stopped && !found);
 
                 if (found)
                 {
-                    if (output_as_string)
+                    if (outputAsString)
                         Assert.Equal(count.ToString(), result);
                     else Assert.Equal(count, result);                        
                 } 
                 else
                 {
-                   if (output_as_string)
-                        Assert.Equal(value_string_for_not_found, result);
-                    else Assert.Equal(value_for_not_found, result);   
+                   if (outputAsString)
+                        Assert.Equal(valueStringForNotFound, result);
+                    else Assert.Equal(valueForNotFound, result);   
                 }
             }
             else 
             {
-                if (output_as_string)
-                    Assert.Equal(value_string_for_invalid, result);
-                else Assert.Equal(value_for_invalid, result);   
+                if (outputAsString)
+                    Assert.Equal(valueStringForInvalid, result);
+                else Assert.Equal(valueForInvalid, result);   
             }
         }
         #endregion

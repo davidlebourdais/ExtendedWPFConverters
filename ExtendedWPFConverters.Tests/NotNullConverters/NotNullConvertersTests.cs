@@ -27,10 +27,8 @@ namespace EMA.ExtendedWPFConverters.Tests
         {
             var converter = new NotNullToVisibilityConverter() { ValueForNotNull = valueForNotNull, ValueForNull = valueForNull };
             var result = converter.Convert(input, typeof(object), null, null);
-            if (input != null)
-                Assert.Equal(valueForNotNull, result);
-            else
-                Assert.Equal(valueForNull, result);
+            
+            Assert.Equal(input != null ? valueForNotNull : valueForNull, result);
         }
         #endregion
     }

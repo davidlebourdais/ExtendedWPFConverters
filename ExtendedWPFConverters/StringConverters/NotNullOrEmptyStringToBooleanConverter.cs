@@ -45,8 +45,7 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>A string which will not be null or empty depending on the passed value and the current operation.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return ((ValueForNotNullOrEmpty && (value as bool?) == true)
-                || (!ValueForNotNullOrEmpty && (value as bool?) != true)) ?  "not null nor empty" : null;
+            return ValueForNotNullOrEmpty && value as bool? == true || !ValueForNotNullOrEmpty && value as bool? != true ? "not null nor empty" : null;
         }
 
         /// <summary>
@@ -54,9 +53,6 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
         /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }

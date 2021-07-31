@@ -27,7 +27,7 @@
         /// </summary>
         Or,
         /// <summary>
-        /// Boolean 'Exlusive OR' operation
+        /// Boolean 'Exclusive OR' operation
         /// </summary>
         Xor,
         /// <summary>
@@ -41,6 +41,6 @@
         /// <summary>
         /// Boolean 'Exclusive NOR' operation
         /// </summary>
-        Xnor
+        XNor
     }
 }

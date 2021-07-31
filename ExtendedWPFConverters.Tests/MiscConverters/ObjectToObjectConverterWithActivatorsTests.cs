@@ -15,8 +15,8 @@ namespace EMA.ExtendedWPFConverters.Tests
                 ActivationOperation = operation
             };
             var result = converter.Convert(inputs, typeof(object), null, null);
-            Assert.Equal(expected, result
-            );
+            
+            Assert.Equal(expected, result);
         }
     }
 }

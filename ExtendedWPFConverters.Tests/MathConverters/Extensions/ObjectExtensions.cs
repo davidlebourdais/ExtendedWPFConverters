@@ -10,7 +10,7 @@ namespace EMA.ExtendedWPFConverters.Tests.Utils
         /// <summary>
         /// Extension method, call for any object, eg "if (x.IsNumeric())..."
         /// </summary>
-        public static bool IsNumeric(this object x) => (x==null ? false : IsNumeric(x.GetType()));
+        public static bool IsNumeric(this object x) => (x != null && IsNumeric(x.GetType()));
 
         /// <summary>
         /// Method where you know the type of the object.

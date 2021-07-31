@@ -38,25 +38,25 @@ namespace EMA.ExtendedWPFConverters.Tests
 
         [Theory]
         [MemberData(nameof(CollectionCountData))]
-        public void ConvertsCollectionToCount(object input, bool outputs_string, int default_count_value, string default_count_value_string)
+        public void ConvertsCollectionToCount(object input, bool outputsString, int defaultCountValue, string defaultCountValueString)
         {
-            var converter = new CollectionCountConverter() { OutputAsString = outputs_string, DefaultCountValue = default_count_value, DefaultCountValueString = default_count_value_string };
+            var converter = new CollectionCountConverter() { OutputAsString = outputsString, DefaultCountValue = defaultCountValue, DefaultCountValueString = defaultCountValueString };
             var result = converter.Convert(input, typeof(Color), null, null);
-            if (input is IEnumerable)
+            if (input is IEnumerable enumerable)
             {
                 var count = 0;
-                var enumerator = (input as IEnumerable).GetEnumerator();
+                var enumerator = enumerable.GetEnumerator();
                 while (enumerator.MoveNext())  // seems to be actual implementation for Count properties.
                     count++;
 
-                if (outputs_string)
+                if (outputsString)
                     Assert.Equal(count.ToString(), result);
                 else Assert.Equal(count, result);
             }
             else
-                if (outputs_string)
-                    Assert.Equal(default_count_value_string, result);
-                else Assert.Equal(default_count_value, result);
+                if (outputsString)
+                    Assert.Equal(defaultCountValueString, result);
+                else Assert.Equal(defaultCountValue, result);
         }
         #endregion
 
@@ -69,7 +69,7 @@ namespace EMA.ExtendedWPFConverters.Tests
             new object[] { new List<object>(100) },
             new object[] { "test" },
             new object[] { new Dictionary<List<int>, int>() { { new List<int>() { 1, 2 }, 3 } } },
-            new object[] { new string[] { "abc", "def" } },
+            new object[] { new[] { "abc", "def" } },
             new object[] { new List<object>() },
             new object[] { null }
         };
@@ -78,10 +78,10 @@ namespace EMA.ExtendedWPFConverters.Tests
         [MemberData(nameof(CollectionFirstItemData))]
         public void ConvertsCollectionToFirstItem(object input)
         {
-            var converter = new CollectionFirstItemConverter() { };
+            var converter = new CollectionFirstItemConverter();
             var result = converter.Convert(input, typeof(IEnumerable), null, null);
-            if (input is IEnumerable)
-                Assert.Equal((input as IEnumerable).GetEnumerator().MoveNext(), result);
+            if (input is IEnumerable enumerable)
+                Assert.Equal(enumerable.GetEnumerator().MoveNext(), result);
             else Assert.Null(result);
         }
         #endregion

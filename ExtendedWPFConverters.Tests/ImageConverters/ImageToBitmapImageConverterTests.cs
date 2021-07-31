@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Xunit;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Windows.Media.Imaging;
 
 namespace EMA.ExtendedWPFConverters.Tests
 {
@@ -17,16 +18,16 @@ namespace EMA.ExtendedWPFConverters.Tests
             new object[] { null }
         };
 
-        private static Bitmap CreateBitmapAtRuntime(int size_x, int size_y, Brush brush)
+        private static Bitmap CreateBitmapAtRuntime(int sizeX, int sizeY, Brush brush)
         {
-            var image = new Bitmap(size_x, size_y);
-            Graphics.FromImage(image).FillRectangle(brush, 0, 0, size_x, size_y);
+            var image = new Bitmap(sizeX, sizeY);
+            Graphics.FromImage(image).FillRectangle(brush, 0, 0, sizeX, sizeY);
             return image;
         }
 
-        private static Stream CreateJpegStreamAtRuntime(int size_x, int size_y, Brush brush)
+        private static Stream CreateJpegStreamAtRuntime(int sizeX, int sizeY, Brush brush)
         {
-            var image = CreateBitmapAtRuntime(size_x, size_y, brush);
+            var image = CreateBitmapAtRuntime(sizeX, sizeY, brush);
             var ms = new MemoryStream();  // no 'using' here, make sure stream is disposed during test.
             image.Save(ms, ImageFormat.Jpeg);
             ms.Seek(0, SeekOrigin.Begin);
@@ -39,20 +40,21 @@ namespace EMA.ExtendedWPFConverters.Tests
         {
             var converter = new ImageToBitmapImageConverter();
             var result = converter.Convert(input, input?.GetType(), null, null);
-            if (input is Image)
+            if (input is Image image)
             {
                 try
                 {
-                    Assert.IsType<System.Windows.Media.Imaging.BitmapImage>(result);
-                    Assert.Equal((input as Image).Size.Height, (result as System.Windows.Media.Imaging.BitmapImage).Height);
-                    Assert.Equal((input as Image).Size.Width, (result as System.Windows.Media.Imaging.BitmapImage).Width);
+                    Assert.IsType<BitmapImage>(result);
+                    Assert.Equal(image.Size.Height, ((BitmapImage)result).Height);
+                    Assert.Equal(image.Size.Width, ((BitmapImage)result).Width);
                 }
                 finally
                 {
-                    (input as Image).Dispose();
+                    image.Dispose();
                 }
             }
-            else Assert.Null(result);
+            else
+                Assert.Null(result);
         }
     }
 }

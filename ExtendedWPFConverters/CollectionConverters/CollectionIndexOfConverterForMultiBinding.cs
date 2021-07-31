@@ -63,24 +63,22 @@ namespace EMA.ExtendedWPFConverters
             // If collection is a list, deal with index:
             if (values[0] is IList list)
             {
-                if (list.Contains(values[1]))
-                {
-                    var result = list.IndexOf(values[1]);
-                    return OutputAsString ? (object)result.ToString() : result;
-                }
-                else return OutputAsString ? (object)ValueStringForNotFound : ValueForNotFound;
+                if (!list.Contains(values[1]))
+                    return OutputAsString ? (object)ValueStringForNotFound : ValueForNotFound;
+                
+                var result = list.IndexOf(values[1]);
+                return OutputAsString ? (object)result.ToString() : result;
+
             }
 
             // Else try to guess by enumerating:
-            int index = 0;
+            var index = 0;
             foreach (var item in collection)
             {
                 if (item.Equals(values[1]))
-                {
-                    var result = index++;
-                    return OutputAsString ? (object)result.ToString() : result;
-                }
-                else index++;
+                    return OutputAsString ? (object)index.ToString() : index;
+
+                index++;
             }
 
             return OutputAsString ? (object)ValueStringForNotFound : ValueForNotFound;
@@ -105,9 +103,6 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
         /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace EMA.ExtendedWPFConverters
 {
@@ -7,9 +8,9 @@ namespace EMA.ExtendedWPFConverters
     /// </summary>
     public class BooleanToOpacityConverter : BooleanConverterBase<double>
     {
-        private double value_for_true = 1.0d;
-        private double value_for_false = 0.38d;
-        private double value_for_invalid = 1.0d;
+        private double _valueForTrue = 1.0d;
+        private double _valueForFalse = 0.38d;
+        private double _valueForInvalid = 1.0d;
 
         /// <summary>
         /// Value to be applied when converted value is true.
@@ -17,17 +18,15 @@ namespace EMA.ExtendedWPFConverters
         /// <exception cref="ArgumentException">If passed value is negative or >1.</exception>
         public override double ValueForTrue
         {
-            get => value_for_true;
+            get => _valueForTrue;
             set
             {
-                if (value != value_for_true)
-                {
-                    if (value < 0) 
-                        throw new ArgumentException("Cannot set negative values on " + nameof(ValueForTrue) + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
-                    else if (value > 1.0)
-                        throw new ArgumentException("Cannot set >1.0 values on " + nameof(ValueForTrue) + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
-                    else value_for_true = value;
-                }
+                if (value == _valueForTrue)
+                    return;
+
+                CheckValueOrThrow(value);
+                
+                _valueForTrue = value;
             }
         }
 
@@ -37,17 +36,15 @@ namespace EMA.ExtendedWPFConverters
         /// <exception cref="ArgumentException">If passed value is negative or >1.</exception>
         public override double ValueForFalse
         {
-            get => value_for_false;
+            get => _valueForFalse;
             set
             {
-                if (value != value_for_false)
-                {
-                    if (value < 0)
-                        throw new ArgumentException("Cannot set negative values on " + nameof(ValueForFalse) + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
-                    else if (value > 1.0)
-                        throw new ArgumentException("Cannot set >1.0 values on " + nameof(ValueForFalse) + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
-                    else value_for_false = value;
-                }
+                if (value == _valueForFalse)
+                    return;
+                
+                CheckValueOrThrow(value);
+                
+                _valueForFalse = value;
             }
         }
 
@@ -57,18 +54,25 @@ namespace EMA.ExtendedWPFConverters
         /// <exception cref="ArgumentException">If passed value is negative or >1.</exception>
         public override double ValueForInvalid
         {
-            get => value_for_invalid;
+            get => _valueForInvalid;
             set
             {
-                if (value != value_for_invalid)
-                {
-                    if (value < 0)
-                        throw new ArgumentException("Cannot set negative values on " + nameof(ValueForInvalid) + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
-                    else if (value > 1.0)
-                        throw new ArgumentException("Cannot set >1.0 values on " + nameof(ValueForInvalid) + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
-                    else value_for_invalid = value;
-                }
+                if (value == _valueForInvalid)
+                    return;
+                
+                CheckValueOrThrow(value);
+                    
+                _valueForInvalid = value;
             }
+        }
+
+        private static void CheckValueOrThrow(double value, [CallerMemberName] string propertyName = null)
+        {
+            if (value < 0)
+                throw new ArgumentException("Cannot set negative values on " + propertyName + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
+                    
+            if (value > 1.0)
+                throw new ArgumentException("Cannot set >1.0 values on " + propertyName + " of " + nameof(BooleanToOpacityConverter) + ".", nameof(value));
         }
     }
 }

@@ -37,25 +37,26 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="value">A boolean entry.</param>
         /// <param name="targetType">Unused.</param>
-        /// <param name="parameter">An optional value for "true" output (overrides parameterized one nammed <see cref="ValueForTrue"/>).</param>
+        /// <param name="parameter">An optional value for "true" output (overrides parameterized one named <see cref="ValueForTrue"/>).</param>
         /// <param name="culture">Unused.</param>
         /// <returns>A value corresponding to the boolean entry value once processed by the specified <see cref="BooleanConverterBase{TResult}.Operation"/>.</returns>
         /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             // One can pass value for "true" through parameter:
-            var value_for_true = parameter is TResult ? parameter : ValueForTrue;
+            var valueForTrue = parameter is TResult ? parameter : ValueForTrue;
 
-            if (value is bool castedValue)
-            {
-                if (Operation == ReducedBooleanOperation.None)
-                    return castedValue ? value_for_true : ValueForFalse;
-                else if (Operation == ReducedBooleanOperation.Not)
-                    return castedValue ? ValueForFalse : value_for_true;
-                else
-                    throw new NotSupportedException(Operation.ToString() + " is not supported for " + nameof(BooleanConverterBase<TResult>) + ".");
-            }
-            else return ValueForInvalid;
+            if (!(value is bool castedValue))
+                return ValueForInvalid;
+            
+            if (Operation == ReducedBooleanOperation.None)
+                return castedValue ? valueForTrue : ValueForFalse;
+                
+            if (Operation == ReducedBooleanOperation.Not)
+                return castedValue ? ValueForFalse : valueForTrue;
+                
+            throw new NotSupportedException(Operation + " is not supported for " + nameof(BooleanConverterBase<TResult>) + ".");
+
         }
 
         /// <summary>
@@ -76,9 +77,6 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
         /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }

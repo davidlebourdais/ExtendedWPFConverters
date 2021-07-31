@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.0.2
+Minor API breaking changes: 
+- BooleanOperation.Xnor -> BooleanOperation.XNor
+- MathOperation.Substract -> MathOperation.Subtract
+- MathOperation.SubstractPositiveOnly -> MathOperation.SubtractPositiveOnly
+
 ## v2.0.1
 Updated minimum .Net Core version and package info for better visibility on Nuget feeds.
 

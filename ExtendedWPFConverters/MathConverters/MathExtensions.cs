@@ -18,10 +18,10 @@ namespace EMA.ExtendedWPFConverters.Utils
             result = 0;
             int x = 0, y = 0;
 
-            if (GetGreatestCommonDivisorRecursively(a, m , ref x, ref y) != 1)
+            if (GetGreatestCommonDivisor(a, m) != 1)
                 return false;
 
-            int m0 = m; 
+            var m0 = m; 
             y = 0;
             x = 1; 
     
@@ -30,9 +30,9 @@ namespace EMA.ExtendedWPFConverters.Utils
                 while (a > 1) 
                 { 
                     // q is quotient 
-                    int q = a / m; 
+                    var q = a / m; 
         
-                    int t = m; 
+                    var t = m; 
         
                     // m is remainder now, process 
                     // same as Euclid's algo 
@@ -55,38 +55,18 @@ namespace EMA.ExtendedWPFConverters.Utils
 
             return true;
         }
-
-        /// <summary>
-        /// Gets the GCD with a another passed number.
-        /// </summary>
-        /// <params name="a">Base value.</params>
-        /// <params name="m">Facing value to find the GCD from.</params>
-        /// <returns>The GCD of both values.</returns>
         
-        public static int GetGreatestCommonDivisorWith(this int a, int b) 
-        { 
-            int x = 0, y = 0;
-            return GetGreatestCommonDivisorRecursively(b%a, a, ref x, ref y); 
-        } 
-
-        private static int GetGreatestCommonDivisorRecursively(int a, int b, ref int x, ref int y) 
-        { 
-            // Base Case 
-            if (a == 0) 
-            { 
-                x = 0; y = 1; 
-                return b; 
-            } 
-        
-            int x1 = 0, y1 = 0; // To store results of recursive call 
-            int gcd = GetGreatestCommonDivisorRecursively(b%a, a, ref x, ref y); 
-        
-            // Update x and y using results of recursive 
-            // call 
-            x = y1 - (b/a) * x1; 
-            y = x1;
-        
-            return gcd; 
-        } 
+        private static int GetGreatestCommonDivisor(int a, int b)
+        {
+            while (true)
+            {
+                if (a == 0)
+                    return b;
+                
+                var a1 = a;
+                a = b % a;
+                b = a1;
+            }
+        }
     }
 }

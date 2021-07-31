@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Markup;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace EMA.ExtendedWPFConverters
 {
@@ -39,19 +40,22 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>The number of items the collection contains.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is ICollection castedCollection)
-                return OutputAsString ? (object)castedCollection.Count.ToString() : castedCollection.Count;
-            else if (value is IList castedList)
-                return OutputAsString ? (object)castedList.Count.ToString() : castedList.Count; 
-            else if (value is IEnumerable casted)
+            switch (value)
             {
-                var counter = 0;
-                foreach (var item in casted)
-                    counter++;
-                return OutputAsString ? (object)counter.ToString() : counter;
+                case ICollection castedCollection:
+                    return OutputAsString ? (object)castedCollection.Count.ToString() : castedCollection.Count;
+                case ICollection<object> castedGenericCollection:
+                    return OutputAsString ? (object)castedGenericCollection.Count.ToString() : castedGenericCollection.Count;
             }
-            return OutputAsString ? (object)DefaultCountValueString : DefaultCountValue;
 
+            if (!(value is IEnumerable casted))
+                return OutputAsString ? (object)DefaultCountValueString : DefaultCountValue;
+            
+            var counter = 0;
+            foreach (var _ in casted)
+                counter++;
+            
+            return OutputAsString ? (object)counter.ToString() : counter;
         }
 
         /// <summary>
@@ -73,9 +77,6 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
         /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(System.IServiceProvider serviceProvider)
-        {
-            return this;
-        }
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }

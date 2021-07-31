@@ -26,7 +26,7 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>A <see cref="SolidColorBrush"/> implementing the passed <see cref="Color"/>.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is Color value_color ? new SolidColorBrush(value_color) : Default;
+            return value is Color valueColor ? new SolidColorBrush(valueColor) : Default;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>The <see cref="Color"/> contained into the passed entry, or the default color if entry is invalid.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is SolidColorBrush value_solid ? value_solid.Color : Default.Color;
+            return value is SolidColorBrush valueSolid ? valueSolid.Color : Default.Color;
         }
 
         /// <summary>
@@ -47,9 +47,6 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
         /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }

@@ -11,7 +11,7 @@ namespace EMA.ExtendedWPFConverters
     /// Imported and adapted by David from: https://www.codeproject.com/Tips/517457/Simple-Way-to-Bind-an-Image-Class-as-Source-to-Ima
 
     /// <summary>
-    /// Converts an image to an ImageSource for WPF's Image control bindings.
+    /// Converts an image to an ImageSource for WPF Image control bindings.
     /// </summary>
     public class ImageToBitmapImageConverter : MarkupExtension, IValueConverter
     {
@@ -26,28 +26,30 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>A <see cref="BitmapImage"/> ready to be rendered.</returns>
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is Image image)
+            if (!(value is Image image))
+                return null;
+            
+            var stream = new MemoryStream();
+            try
             {
-                var ms = new MemoryStream();
-                try
-                {
-                    image.Save(ms, image.RawFormat);
-                }
-                catch  // in case the raw format is not supported (no defined encoder with the image)
-                {
-                    image.Save(ms, ImageFormat.Jpeg);
-                }
-                ms.Seek(0, SeekOrigin.Begin);
-                var bi = new BitmapImage
-                {
-                    CacheOption = BitmapCacheOption.OnLoad
-                };
-                bi.BeginInit();
-                bi.StreamSource = ms;
-                bi.EndInit();
-                return bi;
+                image.Save(stream, image.RawFormat);
             }
-            return null;
+            catch  // in case the raw format is not supported (no defined encoder with the image)
+            {
+                image.Save(stream, ImageFormat.Jpeg);
+            }
+            
+            stream.Seek(0, SeekOrigin.Begin);
+            
+            var bitmap = new BitmapImage
+            {
+                CacheOption = BitmapCacheOption.OnLoad
+            };
+            bitmap.BeginInit();
+            bitmap.StreamSource = stream;
+            bitmap.EndInit();
+            
+            return bitmap;
         }
 
         /// <summary>
@@ -69,9 +71,6 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
         /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }

@@ -44,63 +44,51 @@ namespace EMA.ExtendedWPFConverters
         /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
         public virtual object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values == null || values.Any(x => !(x is bool?)))
+            if (values == null || values.Any(x => !(x is bool)))
                 return ValueForInvalid;
 
             switch(Operation)
             {
                 case BooleanOperation.Equality:
-                    bool first_value = false;
+                    var firstValue = false;
                     if (values.Length > 0)
-                        first_value = (values[0] as bool?) != null && ((values[0] as bool?) == true);
+                        firstValue = values[0] is bool && values[0] as bool? == true;
 
                     // Case all true:
-                    if (first_value)
+                    if (firstValue)
                     {
-                        if (values.All(v => ((v as bool?) != null && ((v as bool?) == true))))
+                        if (values.All(v => v is bool && v as bool? == true))
                             return ValueForTrue;
                     }
                     else // case all false:
                     {
-                        if (values.All(v => ((v as bool?) == null || ((v as bool?) == false))))
+                        if (values.All(v => !(v is bool) || v as bool? == false))
                             return ValueForTrue;
                     }
                     return ValueForFalse;
 
                 case BooleanOperation.None:
                 case BooleanOperation.And:
-                    if (values.Any(v => ((v as bool?) == null || ((v as bool?) == false))))
-                        return ValueForFalse;
-                    return ValueForTrue;
+                    return values.Any(v => !(v is bool) || v as bool? == false) ? ValueForFalse : ValueForTrue;
 
                 case BooleanOperation.Or:
-                    if (values.Any(v => ((v as bool?) != null && ((v as bool?) == true))))
-                        return ValueForTrue;
-                    return ValueForFalse;
+                    return values.Any(v => v is bool && v as bool? == true) ? ValueForTrue : ValueForFalse;
 
                 case BooleanOperation.Xor:
-                    if (values.Count(x => (x as bool?) == true) % 2 == 1)
-                        return ValueForTrue;
-                    return ValueForFalse;
+                    return values.Count(x => x as bool? == true) % 2 == 1 ? ValueForTrue : ValueForFalse;
 
                 case BooleanOperation.Not:
                 case BooleanOperation.Nand:
-                    if (values.Any(v => ((v as bool?) == null || ((v as bool?) == false))))
-                        return ValueForTrue;
-                    return ValueForFalse;
+                    return values.Any(v => !(v is bool) || v as bool? == false) ? ValueForTrue : ValueForFalse;
 
                 case BooleanOperation.Nor:
-                    if (values.Any(v => ((v as bool?) != null && ((v as bool?) == true))))
-                        return ValueForFalse;
-                    return ValueForTrue;
+                    return values.Any(v => v is bool && v as bool? == true) ? ValueForFalse : ValueForTrue;
 
-                case BooleanOperation.Xnor:
-                    if (values.Count(x => (x as bool?) == true) % 2 == 1)
-                        return ValueForFalse;
-                    return ValueForTrue;
+                case BooleanOperation.XNor:
+                    return values.Count(x => x as bool? == true) % 2 == 1 ? ValueForFalse : ValueForTrue;
 
                 default:
-                    throw new NotSupportedException(Operation.ToString() + " is not supported for " + nameof(BooleanConverterBaseForMultibinding<TResult>) + ".");
+                    throw new NotSupportedException(Operation + " is not supported for " + nameof(BooleanConverterBaseForMultibinding<TResult>) + ".");
             }
         }
 
@@ -123,9 +111,6 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
         /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }

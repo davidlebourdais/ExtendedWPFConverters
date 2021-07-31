@@ -7,12 +7,12 @@ namespace EMA.ExtendedWPFConverters.Tests
 {
     public class BooleanConvertersTestsBase
     {
-        protected bool Operate(ReducedBooleanOperation operation, bool input) 
+        protected static bool Operate(ReducedBooleanOperation operation, bool input) 
             => operation == ReducedBooleanOperation.None ? input 
                                                          : operation == ReducedBooleanOperation.Not ? !input 
                                                                                                     : throw new NotSupportedException("Unknown " + nameof(ReducedBooleanOperation));
 
-        protected void TestConversion<T>(BooleanConverterBase<T> converter, object input, T valueForTrue, T valueForFalse, T valueForInvalid, ReducedBooleanOperation operation)
+        protected static void TestConversion<T>(BooleanConverterBase<T> converter, object input, T valueForTrue, T valueForFalse, T valueForInvalid, ReducedBooleanOperation operation)
         {
             converter.ValueForTrue = valueForTrue;
             converter.ValueForFalse = valueForFalse;
@@ -24,14 +24,12 @@ namespace EMA.ExtendedWPFConverters.Tests
             if (input is bool)
             {
                 var expected = Operate(operation, (input as bool?) == true);
-                if (expected)
-                    Assert.Equal(valueForTrue, result);
-                else Assert.Equal(valueForFalse, result);
+                Assert.Equal(expected ? valueForTrue : valueForFalse, result);
             }
             else Assert.Equal(valueForInvalid, result);
         }
 
-        protected void TestConversionBack<T>(BooleanConverterBase<T> converter, object input, T valueForTrue, T valueForFalse, T valueForInvalid, ReducedBooleanOperation operation)
+        protected static void TestConversionBack<T>(BooleanConverterBase<T> converter, object input, T valueForTrue, T valueForFalse, T valueForInvalid, ReducedBooleanOperation operation)
         {
             converter.ValueForTrue = valueForTrue;
             converter.ValueForFalse = valueForFalse;
@@ -51,8 +49,8 @@ namespace EMA.ExtendedWPFConverters.Tests
         #region Base for data sets
         public abstract class BooleanConverterBaseTestData<TResult>
         {
-            public static List<object> Inputs = new List<object>() { false, true, null, "invalid" };
-            public static List<ReducedBooleanOperation> Operations = Enum.GetValues(typeof(ReducedBooleanOperation)).Cast<ReducedBooleanOperation>().ToList();
+            private static readonly List<object> _inputs = new List<object>() { false, true, null, "invalid" };
+            private static readonly List<ReducedBooleanOperation> _operations = Enum.GetValues(typeof(ReducedBooleanOperation)).Cast<ReducedBooleanOperation>().ToList();
 
             public static IEnumerable<object[]> ConvertTestData => GenerateConvertTestData(null);
 
@@ -62,15 +60,15 @@ namespace EMA.ExtendedWPFConverters.Tests
             {
                 var toReturn = new List<object[]>();
 
-                foreach (var input in Inputs)
-                    foreach (var operation in Operations)
+                foreach (var input in _inputs)
+                    foreach (var operation in _operations)
                     {
                         if (defaultValues != null)
-                            foreach (var defaultValueSet in defaultValues)
-                                toReturn.Add(new object[] { input, defaultValueSet.Item1, defaultValueSet.Item2, defaultValueSet.Item3, operation });
+                            foreach (var (item1, item2, item3) in defaultValues)
+                                toReturn.Add(new[] { input, item1, item2, item3, operation });
 
                         // Add null inputs for fun or as default:
-                        toReturn.Add(new object[] { input, null, null, null, operation });
+                        toReturn.Add(new[] { input, null, null, null, operation });
                     }
 
                 return toReturn;
@@ -81,24 +79,24 @@ namespace EMA.ExtendedWPFConverters.Tests
                 var toReturn = new List<object[]>();
 
                 // Take data and toggle input/result:
-                foreach (var dataline in ConvertTestData)
+                foreach (var dataLine in ConvertTestData)
                 {
-                    if ((dataline[0] as bool?) == true)
-                        dataline[0] = dataline[1];
-                    else if ((dataline[0] as bool?) == false)
-                        dataline[0] = dataline[2];
-                    else dataline[0] = dataline[3];
+                    if ((dataLine[0] as bool?) == true)
+                        dataLine[0] = dataLine[1];
+                    else if ((dataLine[0] as bool?) == false)
+                        dataLine[0] = dataLine[2];
+                    else dataLine[0] = dataLine[3];
 
-                    if (toReturn.All(x => x.Except(dataline).Any()))  // only add if combination is not already existing.
-                        toReturn.Add(dataline);
+                    if (toReturn.All(x => x.Except(dataLine).Any()))  // only add if combination is not already existing.
+                        toReturn.Add(dataLine);
                 }
 
                 // Add invalid inputs (note that they might be valid depending on target type, then they shall not be processed separately):
-                foreach (var operation in Operations)
-                    foreach (var dataline in ConvertTestData.Select(x => ValueTuple.Create(x[1], x[2], x[3])).Distinct())
+                foreach (var operation in _operations)
+                    foreach (var (item1, item2, item3) in ConvertTestData.Select(x => ValueTuple.Create(x[1], x[2], x[3])).Distinct())
                     {
-                        toReturn.Add(new object[] { null, dataline.Item1, dataline.Item2, dataline.Item3, operation });
-                        toReturn.Add(new object[] { "invalid", dataline.Item1, dataline.Item2, dataline.Item3, operation });
+                        toReturn.Add(new[] { null, item1, item2, item3, operation });
+                        toReturn.Add(new[] { "invalid", item1, item2, item3, operation });
                     }
 
                 return toReturn;

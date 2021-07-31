@@ -8,10 +8,11 @@ namespace EMA.ExtendedWPFConverters.Tests
     {
         [Theory]
         [MemberData(nameof(MathConverterTestDataProvider.ConvertTestData), MemberType= typeof(MathConverterTestDataProvider))]
-        public void ConvertsWithMathOperation(object input, object parameter, CultureInfo culture, MathOperation operation, object valueForInvalid, bool output_as_string, object expected)
+        public void ConvertsWithMathOperation(object input, object parameter, CultureInfo culture, MathOperation operation, object valueForInvalid, bool outputAsString, object expected)
         {
-            var converter = new MathConverter() { Operation = operation, OutputAsString = output_as_string, ValueForInvalid = valueForInvalid };
+            var converter = new MathConverter() { Operation = operation, OutputAsString = outputAsString, ValueForInvalid = valueForInvalid };
             var result = converter.Convert(input, input?.GetType(), parameter, culture);
+            
             Assert.Equal(expected, result);
         }
 
@@ -21,6 +22,7 @@ namespace EMA.ExtendedWPFConverters.Tests
         {
             var converter = new MathConverter() { Operation = operation, ValueForInvalid = valueForInvalid };
             var result = converter.ConvertBack(input, input?.GetType(), parameter, culture);
+            
             Assert.Equal(expected, result);
         }
     }

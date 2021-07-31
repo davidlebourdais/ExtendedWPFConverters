@@ -30,8 +30,8 @@ namespace EMA.ExtendedWPFConverters.Tests
         {
             var converter = new ColorToSolidColorBrushConverter() { Default = defaultBrush };
             var result = converter.Convert(input, typeof(Color), null, null);
-            if (input is Color)
-                Assert.Equal(input as Color?, (result as SolidColorBrush).Color);
+            if (input is Color color)
+                Assert.Equal(color, (result as SolidColorBrush)?.Color);
             else
                 Assert.Equal(defaultBrush, result);
         }

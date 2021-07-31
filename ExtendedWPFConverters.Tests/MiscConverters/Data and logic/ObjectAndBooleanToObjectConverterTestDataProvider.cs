@@ -50,7 +50,7 @@ namespace EMA.ExtendedWPFConverters.Tests.Data
 
         private static IEnumerable<object> ValuesForInvalid => new List<object> { "invalid", null };
 
-        private static List<BooleanOperation> Operations { get; } = Enum.GetValues(typeof(BooleanOperation)).Cast<BooleanOperation>().ToList();
+        private static IEnumerable<BooleanOperation> Operations { get; } = Enum.GetValues(typeof(BooleanOperation)).Cast<BooleanOperation>().ToList();
         #endregion
 
         #region Test data generator
@@ -64,12 +64,11 @@ namespace EMA.ExtendedWPFConverters.Tests.Data
                         foreach (var invalid in ValuesForInvalid)
                         {
                             var value = inputs[0];
-                            object result = invalid;
+                            var result = invalid;
 
                             // Restructure input data to match converter input for multibinding:
-                            var rawInputs = new List<object>() { value };
-                            foreach (var bool_entry in booleans)
-                                rawInputs.Add(bool_entry);
+                            var rawInputs = new List<object> { value };
+                            rawInputs.AddRange(booleans);
 
                             // Precalculate result if possible:
                             if (!booleans.Any())
@@ -77,7 +76,7 @@ namespace EMA.ExtendedWPFConverters.Tests.Data
                             else if (booleans.All(x => x is bool))
                                 result = Operate(operation, booleans.Cast<bool>().ToArray()) ? value : null; 
 
-                            toReturn.Add(new object[] { rawInputs, operation, invalid, result });
+                            toReturn.Add(new[] { rawInputs, operation, invalid, result });
                         }
 
             return toReturn;

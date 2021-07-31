@@ -8,9 +8,9 @@ namespace EMA.ExtendedWPFConverters.Tests
     {
         [Theory]
         [MemberData(nameof(MathConverterTestDataProvider.ConvertTestDataForMultibinding), MemberType= typeof(MathConverterTestDataProvider))]
-        public void ConvertsWithMathOperation(object[] inputs, CultureInfo culture, MathOperation operation, object valueForInvalid, bool output_as_string, object expected)
+        public void ConvertsWithMathOperation(object[] inputs, CultureInfo culture, MathOperation operation, object valueForInvalid, bool outputAsString, object expected)
         {
-            var converter = new MathConverterForMultibinding() { Operation = operation, OutputAsString = output_as_string, ValueForInvalid = valueForInvalid };
+            var converter = new MathConverterForMultibinding() { Operation = operation, OutputAsString = outputAsString, ValueForInvalid = valueForInvalid };
             var result = converter.Convert(inputs, null, null, culture);
             Assert.Equal(expected, result);
         }

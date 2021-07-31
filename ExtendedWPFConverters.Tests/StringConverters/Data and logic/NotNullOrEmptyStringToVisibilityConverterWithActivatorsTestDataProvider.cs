@@ -62,7 +62,7 @@ namespace EMA.ExtendedWPFConverters.Tests.Data
 
         private static IEnumerable<Visibility> ValuesForInvalid => new List<Visibility> { Visibility.Visible, Visibility.Collapsed };
 
-        private static List<BooleanOperation> Operations { get; } = Enum.GetValues(typeof(BooleanOperation)).Cast<BooleanOperation>().ToList();
+        private static IEnumerable<BooleanOperation> Operations { get; } = Enum.GetValues(typeof(BooleanOperation)).Cast<BooleanOperation>().ToList();
         #endregion
 
         #region Test data generator
@@ -82,17 +82,16 @@ namespace EMA.ExtendedWPFConverters.Tests.Data
 
                             // Restructure input data to match converter input for multibinding:
                             var rawInputs = new List<object>() { value };
-                            foreach (var bool_entry in booleans)
-                                rawInputs.Add(bool_entry);
+                            rawInputs.AddRange(booleans);
 
                             // Precalculate result if possible:
-                            var is_not_null_or_empty = !string.IsNullOrEmpty(value as string);
+                            var isNotNullOREmpty = !string.IsNullOrEmpty(value as string);
                             if (!booleans.Any())
-                                result = is_not_null_or_empty ? valueForNotNullOrEmpty : valueForNullOrEmpty;
+                                result = isNotNullOREmpty ? valueForNotNullOrEmpty : valueForNullOrEmpty;
                             else if (booleans.All(x => x is bool))
-                                result = Operate(operation, booleans.Cast<bool>().ToArray()) && is_not_null_or_empty ? valueForNotNullOrEmpty : valueForNullOrEmpty; 
+                                result = Operate(operation, booleans.Cast<bool>().ToArray()) && isNotNullOREmpty ? valueForNotNullOrEmpty : valueForNullOrEmpty; 
 
-                            toReturn.Add(new object[] { rawInputs, operation, valueForNotNullOrEmpty, valueForNullOrEmpty, invalid, result });
+                            toReturn.Add(new[] { rawInputs, operation, valueForNotNullOrEmpty, valueForNullOrEmpty, invalid, result });
                         }
 
             return toReturn;

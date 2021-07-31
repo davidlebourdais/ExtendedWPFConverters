@@ -13,7 +13,7 @@ namespace EMA.ExtendedWPFConverters
     public class MathConverterForMultibinding: MarkupExtension, IMultiValueConverter
     {
         /// <summary>
-        /// Mathematic operation to be applied.
+        /// Mathematics operation to be applied.
         /// </summary>
         public MathOperation Operation { get; set; }
 
@@ -35,55 +35,56 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="targetType">Unused.</param>
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
-        /// <returns>A numercial value based on the result of the mathematical operation applied to all numerical inputs.</returns>
+        /// <returns>A numerical value based on the result of the mathematical operation applied to all numerical inputs.</returns>
         /// <exception cref="NotSupportedException">Thrown if the math operation is not supported.</exception>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values == null || values.Length < 1 || values[0] == null
-                || (Operation != MathOperation.None && Operation != MathOperation.Absolute) && values.Any(x => x == null)) return ValueForInvalid;
+            if (values == null || values.Length < 1 || values[0] == null || 
+                Operation != MathOperation.None && Operation != MathOperation.Absolute && values.Any(x => x == null)) 
+                return ValueForInvalid;
 
-            var values_array = new List<double>();
+            var valuesArray = new List<double>();
             foreach (var value in values)
             {
                 // If we cannot deduce a number from one of the inputs, return invalid:
-                if (!(double.TryParse(value.ToString().Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double casted)))
+                if (!(double.TryParse(value.ToString()?.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var casted)))
                     return ValueForInvalid;
-                else 
-                    values_array.Add(casted);
+                
+                valuesArray.Add(casted);
 
                 // Stop processing if we got the first value while not needing any more:
                 if (Operation == MathOperation.None || Operation == MathOperation.Absolute)
                     break;
             }
 
-            if (values_array.Count == 0) return ValueForInvalid;
+            if (valuesArray.Count == 0) return ValueForInvalid;
 
-            var result = values_array.First();
+            var result = valuesArray.First();
             switch (Operation)
             {
                 case MathOperation.None:
                     break;
                 case MathOperation.Add:
-                    result = values_array.Aggregate((x, y) => x + y);
+                    result = valuesArray.Aggregate((x, y) => x + y);
                     break;
-                case MathOperation.Substract:
-                    result = values_array.Aggregate((x, y) => x - y);
+                case MathOperation.Subtract:
+                    result = valuesArray.Aggregate((x, y) => x - y);
                     break;
-                case MathOperation.SubstractPositiveOnly:
-                    result = values_array.Aggregate((x, y) => x - y);
+                case MathOperation.SubtractPositiveOnly:
+                    result = valuesArray.Aggregate((x, y) => x - y);
                     result = result > 0.0d ? result : 0.0d;
                     break;
                 case MathOperation.Divide:
-                    result = values_array.Aggregate((x, y) => y != 0 ? x / y : (x != 0 ? x < 0 ? double.NegativeInfinity : double.PositiveInfinity : double.NaN)); 
+                    result = valuesArray.Aggregate((x, y) => y != 0 ? x / y : (x != 0 ? x < 0 ? double.NegativeInfinity : double.PositiveInfinity : double.NaN)); 
                     break;
                 case MathOperation.Multiply:
-                    result = values_array.Aggregate((x, y) => x * y);
+                    result = valuesArray.Aggregate((x, y) => x * y);
                     break;
                 case MathOperation.Modulo:
-                    result = values_array.Aggregate((x, y) => x % y);
+                    result = valuesArray.Aggregate((x, y) => x % y);
                     break;
                 case MathOperation.Power:
-                    result = values_array.Aggregate((x, y) => Math.Pow(x, y));
+                    result = valuesArray.Aggregate(Math.Pow);
                     break;
                 case MathOperation.Absolute:
                     result = Math.Abs(result);
@@ -114,9 +115,6 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
         /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }

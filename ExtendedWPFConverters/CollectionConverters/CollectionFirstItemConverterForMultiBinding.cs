@@ -31,7 +31,7 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>The first value of the passed set of values, or null is not existing.</returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            return values != null && values.Length > 0 ? (AsIEnumerable ? (values[0] is IEnumerable<object> asIenumerable ? asIenumerable.First() : null) : values[0]) : null;
+            return values != null && values.Length > 0 ? (AsIEnumerable ? (values[0] is IEnumerable<object> asIEnumerable ? asIEnumerable.First() : null) : values[0]) : null;
         }
 
         /// <summary>
@@ -53,9 +53,6 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="serviceProvider">A service provider helper that can provide services for the markup extension.</param>
         /// <returns>The object value to set on the property where the extension is applied.</returns>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }
 }
