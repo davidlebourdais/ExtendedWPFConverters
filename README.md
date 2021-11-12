@@ -53,6 +53,7 @@ All converters are supplied for one, two or three of the above families. Availab
 |Object|InstanceToTypeConverter||Type|Yes|No|No
 |Object|ObjectToObjectConverter||Object|No|No|Yes
 |Object|NotNullToVisibilityConverter|!=null|Visibility|Yes|No|No
+|Enum|EnumValueToDescriptionConverter|DescriptionAttribute extraction|String|Yes|No|No
 |String|CamelCaseStringToTitleStringConverter|String formatting |String|Yes|No|No
 |String|NotNullOrEmptyStringToBooleanConverter|!=null and !=empty|Bool|Yes|No|No
 |String|NotNullOrEmptyStringToVisibilityConverter|!=null and !=empty|Bool|Yes|No|Yes
@@ -207,6 +208,15 @@ Converts the input null state into a Visibility value.
 **Example**
 
     <ContentControl Visibility="{Binding SomeViewModel, Converter={extconv:NotNullToVisibilityConverter ValueForNull=Visibility.Hidden}}" />
+
+### Enum converters ("EnumXXXXConverter")
+
+#### EnumValueToDescriptionConverter
+Extracts the DescriptionAttribute.Description value from an enum item.
+
+**Example**
+
+    <TextBlock Source="{Binding SomeEnumValue, Converter={extconv:EnumValueToDescriptionConverter}}"/>
 
 ### String converters
 
