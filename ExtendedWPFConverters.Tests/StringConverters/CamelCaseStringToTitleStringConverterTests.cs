@@ -1,6 +1,4 @@
-using System;
 using Xunit;
-using System.Windows;
 
 namespace EMA.ExtendedWPFConverters.Tests
 {
@@ -11,7 +9,7 @@ namespace EMA.ExtendedWPFConverters.Tests
         [InlineData("someText", "Some Text")]
         [InlineData("Some", "Some")]
         [InlineData("   SomeText", "Some Text")]
-        [InlineData("Some  Text", "Some Text")]
+        [InlineData("   Some  Text", "Some Text")]
         [InlineData("Some12Text", "Some 12 Text")]
         [InlineData("12SomeText", "12 Some Text")]
         [InlineData("", "")]

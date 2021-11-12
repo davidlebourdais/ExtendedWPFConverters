@@ -29,7 +29,7 @@ namespace EMA.ExtendedWPFConverters.Tests
         }
         
         [Fact]
-        public void ThrowWhenConvertsNonUniformThicknessToDouble()
+        public void ThrowsWhenConvertsNonUniformThicknessToDouble()
         {
             var input = new Thickness(15d, 1d, 5d, 20d);
             

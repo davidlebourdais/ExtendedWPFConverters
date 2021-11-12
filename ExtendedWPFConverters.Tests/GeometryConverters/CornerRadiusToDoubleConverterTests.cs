@@ -29,7 +29,7 @@ namespace EMA.ExtendedWPFConverters.Tests
         }
         
         [Fact]
-        public void ThrowWhenConvertsNonUniformCornerRadiusToDouble()
+        public void ThrowsWhenConvertsNonUniformCornerRadiusToDouble()
         {
             var input = new CornerRadius(15d, 1d, 5d, 20d);
             

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows.Markup;
 
@@ -27,19 +26,9 @@ namespace EMA.ExtendedWPFConverters
         /// <returns>A string in the title case format.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is string asString))
-                return null;
-            
-            return SplitCamelCase(asString);
+            return (value as string).ToTitleCase();
         }
-
-        private static string SplitCamelCase(string toSplit)
-        {
-            if (toSplit.Length > 0)
-                toSplit = char.ToUpper(toSplit[0]) + toSplit[1..];
-            return Regex.Replace(toSplit.Replace(" ", ""), "([a-z](?=[A-Z]|[0-9])|[A-Z](?=[A-Z][a-z]|[0-9])|[0-9](?=[^0-9]))", "$1 ");
-        }
-
+        
         /// <summary>
         /// Sets a string content to CamelCase.
         /// </summary>
@@ -58,7 +47,7 @@ namespace EMA.ExtendedWPFConverters
             if (FirstLetterIsLowerCase)
             {
                 if (result.Length > 0)
-                    result = char.ToLower(result[0]) + result[1..];
+                    result = char.ToLower(result[0]) + result.Substring(1);
             }
             
             return result;
