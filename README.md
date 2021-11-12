@@ -54,6 +54,7 @@ All converters are supplied for one, two or three of the above families. Availab
 |Object|ObjectToObjectConverter||Object|No|No|Yes
 |Object|NotNullToVisibilityConverter|!=null|Visibility|Yes|No|No
 |Enum|EnumValueToDescriptionConverter|DescriptionAttribute extraction|String|Yes|No|No
+|Type or Enum|EnumMembersToDescriptionsConverter|DescriptionAttribute extractions|String[]|Yes|No|No
 |String|CamelCaseStringToTitleStringConverter|String formatting |String|Yes|No|No
 |String|NotNullOrEmptyStringToBooleanConverter|!=null and !=empty|Bool|Yes|No|No
 |String|NotNullOrEmptyStringToVisibilityConverter|!=null and !=empty|Bool|Yes|No|Yes
@@ -217,6 +218,17 @@ Extracts the DescriptionAttribute.Description value from an enum item.
 **Example**
 
     <TextBlock Source="{Binding SomeEnumValue, Converter={extconv:EnumValueToDescriptionConverter}}"/>
+
+#### EnumMembersToDescriptionsConverter
+Extracts a list DescriptionAttribute.Description from an enum type or an enum item (type will be extracted from this item to get other member values).
+
+**Parameters**
+-  ***GetMembersWithNoDescription***: if set, also includes members with no description. Their name will be returned in the conversion result. Default is true.
+-  ***ToTitleCase***: if set, normalizes the resulting items' format by removing spaces and setting upper case letters where needed. Default is false.
+
+**Example**
+
+    <ComboBox ItemsSource="{Binding SomeEnumValue, Converter={extconv:EnumMembersToDescriptionsConverter}}"/>
 
 ### String converters
 
