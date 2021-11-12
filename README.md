@@ -53,6 +53,7 @@ All converters are supplied for one, two or three of the above families. Availab
 |Object|InstanceToTypeConverter||Type|Yes|No|No
 |Object|ObjectToObjectConverter||Object|No|No|Yes
 |Object|NotNullToVisibilityConverter|!=null|Visibility|Yes|No|No
+|Type|TypePropertiesToDescriptionsConverter|DescriptionAttribute extractions|String[]|Yes|No|No
 |Enum|EnumValueToDescriptionConverter|DescriptionAttribute extraction|String|Yes|No|No
 |Type or Enum|EnumMembersToDescriptionsConverter|DescriptionAttribute extractions|String[]|Yes|No|No
 |String|CamelCaseStringToTitleStringConverter|String formatting |String|Yes|No|No
@@ -209,6 +210,17 @@ Converts the input null state into a Visibility value.
 **Example**
 
     <ContentControl Visibility="{Binding SomeViewModel, Converter={extconv:NotNullToVisibilityConverter ValueForNull=Visibility.Hidden}}" />
+
+#### TypePropertiesToDescriptionsConverter
+Extracts a list DescriptionAttribute.Description from the public properties of a given type.
+
+**Parameters**
+-  ***GetMembersWithNoDescription***: if set, also includes properties with no description. Their name will be returned in the conversion result. Default is true.
+-  ***ToTitleCase***: if set, normalizes the resulting items' format by removing spaces and setting upper case letters where needed. Default is false.
+
+**Example**
+
+    <ComboBox ItemsSource="{Binding SomeType, Converter={extconv:TypePropertiesToDescriptionsConverter}}"/>
 
 ### Enum converters ("EnumXXXXConverter")
 
