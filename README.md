@@ -53,6 +53,7 @@ All converters are supplied for one, two or three of the above families. Availab
 |Object|InstanceToTypeConverter||Type|Yes|No|No
 |Object|ObjectToObjectConverter||Object|No|No|Yes
 |Object|NotNullToVisibilityConverter|!=null|Visibility|Yes|No|No
+|String|CamelCaseStringToTitleStringConverter|String formatting |String|Yes|No|No
 |String|NotNullOrEmptyStringToBooleanConverter|!=null and !=empty|Bool|Yes|No|No
 |String|NotNullOrEmptyStringToVisibilityConverter|!=null and !=empty|Bool|Yes|No|Yes
 |String|StringToHorizontalAlignmentConverter|   |HorizontalAlignment|Yes|No|No
@@ -208,6 +209,17 @@ Converts the input null state into a Visibility value.
     <ContentControl Visibility="{Binding SomeViewModel, Converter={extconv:NotNullToVisibilityConverter ValueForNull=Visibility.Hidden}}" />
 
 ### String converters
+
+#### CamelCaseStringToTitleStringConverter
+Converts the content of a string from 'CamelCase' or 'camelCase' to 'Title Case' with normalized spaces.
+
+**Parameter**
+-  ***FirstLetterIsLowerCase***: used only when converting back ; if set, will use a lower case first letter to get 'camelCase' instead of 'CamelCase'. Default is false.
+
+**Example**
+
+    <TextBlock Text="{Binding SomeText, Converter={extconv:CamelCaseStringToTitleStringConverter}}" />
+
 
 #### NotNullOrEmptyStringToXXXXConverter
 Returns a result depending on the state of a passed string (if null or empty).
