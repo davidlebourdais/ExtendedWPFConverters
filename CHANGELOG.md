@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.0.3
+Added new converters:
+- CamelCaseStringToTitleStringConverter
+- CornerRadiusToDoubleConverter
+- EnumMembersToDescriptionsConverter
+- EnumValueToDescriptionConverter
+- ThicknessToDoubleConverter
+- TypePropertiesToDescriptionsConverter
+
 ## v2.0.2
 Updated to .NET 5
 Minor API breaking changes: 
