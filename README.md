@@ -57,6 +57,8 @@ All converters are supplied for one, two or three of the above families. Availab
 |String|NotNullOrEmptyStringToVisibilityConverter|!=null and !=empty|Bool|Yes|No|Yes
 |String|StringToHorizontalAlignmentConverter|   |HorizontalAlignment|Yes|No|No
 |String|StringToVerticalAlignmentConverter|   |VerticalAlignment|Yes|No|No
+|Thickness|ThicknessToDoubleConverter|   |Double|Yes|No|No
+|CornerRadius|CornerRadiusToDoubleConverter|   |Double|Yes|No|No
 
 ## How to use
 Alway invoke the library in your xaml header definition:
@@ -231,6 +233,28 @@ Parses a string to produce an alignment (horizontal or vertical) value. Returns 
 **Note**
 
 > These converters support bidirectional string translations when a proper translation fetcher is provided as converter parameter and a culture information is set for the application. See the list of accepted types for this fetcher in the documentation of the [CheckFetcherFormat method](ExtendedWPFConverters/StringConverters/Utils/StringTranslationHelper.cs).
+
+### Geometry converters
+
+#### ThicknessToDoubleConverter
+Returns the Left value of a thickness.
+
+**Parameter**
+-  ***ThrowOnNonUniformThickness***: if sets, throws an exception when trying to convert a thickness with non-uniform values. Default is false.
+
+**Example**
+
+    <Rectangle StrokeThickness="{Binding BorderThickness, ElementName=border, Converter={extconv:ThicknessToDoubleConverter}}" />
+
+#### CornerRadiusToDoubleConverter
+Returns the TopLeft value of a corner radius.
+
+**Parameter**
+-  ***ThrowOnNonUniformCornerRadius***: if sets, throws an exception when trying to convert a corner radius with non-uniform values. Default is false.
+
+**Example**
+
+    <Rectangle RadiusX="{Binding CornerRadius, ElementName=border, Converter={extconv:CornerRadiusToDoubleConverter}}" />
 
 ## That's it!
 Hope you will enjoy these converters!
