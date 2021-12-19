@@ -52,6 +52,8 @@ All converters are supplied for one, two or three of the above families. Availab
 |Double|MathConverter|+, -, *, /, %, ^, abs()|Double or String|Yes|Yes|No
 |Object|InstanceToTypeConverter||Type|Yes|No|No
 |Object|ObjectToObjectConverter||Object|No|No|Yes
+|Object|EqualityToBooleanConverter|Equality|Boolean|Yes|No|No
+|Object|EqualityToVisibilityConverter|Equality|Visibility|Yes|No|No
 |Object|NotNullToVisibilityConverter|!=null|Visibility|Yes|No|No
 |Type|TypePropertiesToDescriptionsConverter|DescriptionAttribute extractions|String[]|Yes|No|No
 |Enum|EnumValueToDescriptionConverter|DescriptionAttribute extraction|String|Yes|No|No
@@ -197,6 +199,20 @@ Returns the input only if activators allow for it.
 
 **Parameters**
 See **'Multi-value converters with activators'** description on top of this documentation.
+
+#### EqualityToBooleanConverter
+Returns true if value is equal to parameter.
+
+**Parameters**
+ -  ***TrueIfNotEqual***: reverts result if set. Default is false.
+
+#### EqualityToVisibilityConverter
+Returns a visibility value corresponding to value-parameter equality.
+
+**Parameters**
+ -  ***TrueIfNotEqual***: reverts result if set. Default is false.
+ -  ***VisibilityForTrue***: visibility to be returned when equality (or inequality if TrueIfNotEqual is set) is verified. Default is Visibility.Visible.
+ -  ***VisibilityForFalse***: visibility to be returned when inequality (or equality if TrueIfNotEqual is set) is verified. Default is Visibility.Collapsed.
 
 ### 'Not null' converters (NotNullToXXXXConverter)
 

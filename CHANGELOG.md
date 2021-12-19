@@ -1,5 +1,9 @@
 # Changelog
 
+Added new converters:
+- EqualityToBooleanConverter
+- EqualityToVisibilityConverter
+
 ## v2.0.3
 Added new converters:
 - CamelCaseStringToTitleStringConverter
