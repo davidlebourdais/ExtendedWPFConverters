@@ -28,46 +28,46 @@ Aside from usage, converters can be classified into 3 families:
 
 - **Multi-value converters** to be used with a MultiBinding: **multiple inputs of interest give a single output**. They often display an *'Operation'* parameter that dictates how entries are tied together (ex: *'Or'* operation). Their name pattern is *XXXXConverterForMultibinding*.
 
-- **Multi-value converters with activators** to be used with a MultiBinding but: **one input of interest + activation signals giving a single output**. They indeed all accept booleans as secondary entries and all provide an **ActivationOperation** property that ties these boolean values together. Allowed operation values are common boolean operations: *None*, *Not*, *And*, *Or*, *Xor*, *Nand*, *Nor*, *Xnor* and defaults to *And*. When the operation over the entries outputs the 'true', the input is transferred as output, otherwise **ValueForInvalid** is returned. They have a *XXXXConverterWithActivators* name pattern.
+- **Multi-value converters with activators** to be used with a MultiBinding but: **one input of interest + activation signals giving a single output**. They all indeed accept booleans as secondary entries and all provide an **ActivationOperation** property that ties these boolean values together. Allowed operation values are common boolean operations: *None*, *Not*, *And*, *Or*, *Xor*, *Nand*, *Nor*, *Xnor* and defaults to *And*. When the operation over the entries outputs the 'true', the input is transferred as output, otherwise **ValueForInvalid** is returned. They have a *XXXXConverterWithActivators* name pattern.
 
 All converters are supplied for one, two or three of the above families. Availability mainly depends on usage relevance (ex: *CollectionIndexOfConverter* cannot be used with a single variable entry since a collection and a value must be provided, so it cannot be a single value converter).
 
 ## Quick reference
 
 
-|Input type|Name|Function|Output type|Single value?|Multi-binding?|With activators?|
-|---|---|---|---|---|---|---|
-|Boolean|BooleanToBooleanConverter||Boolean|Yes|Yes|No
-|Boolean|BooleanToFontWeightConverter||FontWeight|Yes|Yes|No
-|Boolean|BooleanToObjectConverter|   |Object|Yes|No|No
-|Boolean|BooleanToNumberConverter|   |IComparable|Yes|No|No
-|Boolean|BooleanToOpacityConverter|   |Double|Yes|No|No
-|Boolean|BooleanToThicknessConverter|   |Thickness|Yes|No|No
-|Boolean|BooleanToVisibilityConverter|   |Visibility|Yes|Yes|No
-|IEnumerable|CollectionCountConverter|Count()|Int or String|Yes|No|No
-|IEnumerable|CollectionFirstItemConverter|First()|Object|Yes|Yes|No
-|IEnumerable|CollectionIndexOfConverter|First()|Int or String|No|Yes|No
-|Color|ColorToSolidColorBrushConverter|   |SolidColorBrush|Yes|No|No
-|Image|ImageToBitmapImageConverter|   |Bitmap|Yes|No|No
-|Double|MathConverter|+, -, *, /, %, ^, abs()|Double or String|Yes|Yes|No
-|Object|InstanceToTypeConverter||Type|Yes|No|No
-|Object|ObjectToObjectConverter||Object|No|No|Yes
-|Object|EqualityToBooleanConverter|Equality|Boolean|Yes|No|No
-|Object|EqualityToVisibilityConverter|Equality|Visibility|Yes|No|No
-|Object|NotNullToVisibilityConverter|!=null|Visibility|Yes|No|No
-|Type|TypePropertiesToDescriptionsConverter|DescriptionAttribute extractions|String[]|Yes|No|No
-|Enum|EnumValueToDescriptionConverter|DescriptionAttribute extraction|String|Yes|No|No
-|Type or Enum|EnumMembersToDescriptionsConverter|DescriptionAttribute extractions|String[]|Yes|No|No
-|String|CamelCaseStringToTitleStringConverter|String formatting |String|Yes|No|No
-|String|NotNullOrEmptyStringToBooleanConverter|!=null and !=empty|Bool|Yes|No|No
-|String|NotNullOrEmptyStringToVisibilityConverter|!=null and !=empty|Bool|Yes|No|Yes
-|String|StringToHorizontalAlignmentConverter|   |HorizontalAlignment|Yes|No|No
-|String|StringToVerticalAlignmentConverter|   |VerticalAlignment|Yes|No|No
-|Thickness|ThicknessToDoubleConverter|   |Double|Yes|No|No
-|CornerRadius|CornerRadiusToDoubleConverter|   |Double|Yes|No|No
+|Input type| Name                                      | Function                         | Output type         |Single value?|Multi-binding?|With activators?|
+|---|-------------------------------------------|----------------------------------|---------------------|---|---|---|
+|Boolean| BooleanToBooleanConverter                 |                                  | Boolean             |Yes|Yes|No|
+|Boolean| BooleanToFontWeightConverter              |                                  | FontWeight          |Yes|Yes|No|
+|Boolean| BooleanToObjectConverter                  |                                  | Object              |Yes|No|No|
+|Boolean| BooleanToNumberConverter                  |                                  | IComparable         |Yes|No|No|
+|Boolean| BooleanToOpacityConverter                 |                                  | Double              |Yes|No|No|
+|Boolean| BooleanToThicknessConverter               |                                  | Thickness           |Yes|No|No|
+|Boolean| BooleanToVisibilityConverter              |                                  | Visibility          |Yes|Yes|No|
+|IEnumerable| CollectionCountConverter                  | Count()                          | Int or String       |Yes|No|No|
+|IEnumerable| CollectionFirstItemConverter              | First()                          | Object              |Yes|Yes|No|
+|IEnumerable| CollectionIndexOfConverter                | First()                          | Int or String       |No|Yes|No|
+|Color| ColorToSolidColorBrushConverter           |                                  | SolidColorBrush     |Yes|No|No|
+|Image| ImageToBitmapImageConverter               |                                  | Bitmap              |Yes|No|No|
+|Double| MathConverter                             | +, -, *, /, %, ^, abs()          | Double or String    |Yes|Yes|No|
+|Object| InstanceToTypeConverter                   |                                  | Type                |Yes|No|No|
+|Object| ObjectToObjectConverter                   |                                  | Object              |No|No|Yes|
+|Object| EqualityToBooleanConverter                | Equality                         | Boolean             |Yes|No|No|
+|Object| EqualityToVisibilityConverter             | Equality                         | Visibility          |Yes|No|No|
+|Object| NotNullToVisibilityConverter              | !=null                           | Visibility          |Yes|No|No|
+|Type| TypePropertiesToDescriptionsConverter     | DescriptionAttribute extractions | String[]            |Yes|No|No|
+|Enum| EnumValueToDescriptionConverter           | DescriptionAttribute extraction  | String              |Yes|No|No|
+|Type or Enum| EnumMembersToDescriptionsConverter        | DescriptionAttribute extractions | String[]            |Yes|No|No|
+|String| CamelCaseStringToTitleStringConverter     | String formatting                | String              |Yes|No|No|
+|String| NotNullOrEmptyStringToBooleanConverter    | !=null and !=empty               | Bool                |Yes|No|No|
+|String| NotNullOrEmptyStringToVisibilityConverter | !=null and !=empty               | Bool                |Yes|No|Yes|
+|String| StringToHorizontalAlignmentConverter      |                                  | HorizontalAlignment |Yes|No|No|
+|String| StringToVerticalAlignmentConverter        |                                  | VerticalAlignment   |Yes|No|No|
+|Thickness| ThicknessToDoubleConverter                |                                  | Double              |Yes|No|No|
+|CornerRadius| CornerRadiusToDoubleConverter             |                                  | Double              |Yes|No|No|
 
 ## How to use
-Alway invoke the library in your xaml header definition:
+Always invoke the library in your xaml header definition:
 
     xmlns:extconv="clr-namespace:EMA.ExtendedWPFConverters;assembly=ExtendedWPFConverters"
 
@@ -98,7 +98,7 @@ Converts any boolean entry into a new object type.
  -  ***ValueForTrue***: to be returned when conversion result is true (after operation if any). Default is set to common 'true' value for the target type (ex: Visible for Visibility)
  -  ***ValueForFalse***: value to be returned when conversion result is false (after operation if any). Default value is often set to the target type's default value (ex: 0.0 for double).
  -  ***ValueForInvalid***: value to be returned when input is not boolean or is null. Default often worth target type's default value too.
- -  ***Operation***: an optional boolean operation to be applied on all inputs and that will give the final converted result. Allowed values depends if the converter is used for single bindings (None, Not) or multi-bindings (None, Not, And, Or, Xor, Nand, etc.). Default is None.
+ -  ***Operation***: an optional boolean operation to be applied on all inputs and that will give the final converted result. Allowed values depends upon whether the converter is used for single bindings (None, Not) or multi-bindings (None, Not, And, Or, Xor, Nand, etc.). Default is None.
  - 
 **Example**
 
@@ -140,8 +140,8 @@ In a collection given as first input, returns the index of the element passed as
  -  ***OutputAsString***: sets type of returned value (string or int). Default is false.
  -  ***ValueForInvalid***: to be returned in case the collection is not iterable. Default is -1.
  -  ***ValueStringForInvalid***: to be returned in case the collection is not iterable. Default is -1.
- -  ***ValueForNotFound***: to be returned in case the collection does not contains the value and ***OutputAsString*** is set. Default is empty string.
- - ***ValueStringForNotFound***: to be returned in case the collection does not contains the value and ***OutputAsString*** is set. Default is empty string.
+ -  ***ValueForNotFound***: to be returned in case the collection does not contain the value and ***OutputAsString*** is set. Default is empty string.
+ - ***ValueStringForNotFound***: to be returned in case the collection does not contain the value and ***OutputAsString*** is set. Default is empty string.
  
 ### Color converters ("ColorToXXXXConverter")
 
@@ -171,8 +171,8 @@ Performs a mathematical operation over a single input and the converter paramete
 **Parameters**
  -  ***Operation***: mathematical operation to be applied on the inputs
 	 - Add: sums input values up
-	 - Substract: substracts input values
-	 - SubstractPositiveOnly: subtracts input values but cannot go negative (bottoms at 0)
+	 - Subtract: subtracts input values
+	 - SubtractPositiveOnly: subtracts input values but cannot go negative (bottoms at 0)
 	 - Multiply: product of the input values
 	 - Divide: division of the input values, returns PositiveInfinity or NegativeInfinity if encounters a division by zero
 	 - Modulo: applies sequentially the modulo operation on all inputs
