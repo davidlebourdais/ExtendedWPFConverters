@@ -48,6 +48,9 @@ namespace EMA.ExtendedWPFConverters.Tests
                 var enumerator = enumerable.GetEnumerator();
                 while (enumerator.MoveNext())  // seems to be actual implementation for Count properties.
                     count++;
+                
+                if (enumerator is IDisposable disposable)
+                    disposable.Dispose();
 
                 if (outputsString)
                     Assert.Equal(count.ToString(), result);
@@ -81,8 +84,41 @@ namespace EMA.ExtendedWPFConverters.Tests
             var converter = new CollectionFirstItemConverter();
             var result = converter.Convert(input, typeof(IEnumerable), null, null);
             if (input is IEnumerable enumerable)
-                Assert.Equal(enumerable.GetEnumerator().MoveNext(), result);
+            {
+                var enumerator = enumerable.GetEnumerator();
+                Assert.Equal(enumerator.MoveNext(), result);
+                
+                if (enumerator is IDisposable disposable)
+                    disposable.Dispose();
+            }
             else Assert.Null(result);
+        }
+        #endregion
+        
+        #region CollectionNotEmptyToVisibilityConverter
+        public static IEnumerable<object[]> CollectionNotEmptyToVisibilityData => new List<object[]>
+        {
+            new object[] { new[] { 0, 1, 2 }, true },
+            new object[] { new List<object>() { 1, 2, 3}, true },
+            new object[] { "test", true },
+            new object[] { new object[5], true },
+            new object[] { null, false },
+            new object[] { new List<object>(), false },
+            new object[] { new List<object>(5), false },
+        };
+
+        [Theory]
+        [MemberData(nameof(CollectionNotEmptyToVisibilityData))]
+        public void ConvertsCollectionCountToVisibility(object input, bool expected)
+        {
+            var converter = new CollectionNotEmptyToVisibilityConverter();
+            
+            var result = converter.Convert(input, typeof(IEnumerable), null, null);
+            
+            if (expected)
+                Assert.Equal(result, converter.ValueWhenNotEmpty);
+            else
+                Assert.Equal(result, converter.ValueForNullOrEmpty);
         }
         #endregion
     }

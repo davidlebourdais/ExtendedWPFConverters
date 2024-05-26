@@ -47,6 +47,7 @@ All converters are supplied for one, two or three of the above families. Availab
 |IEnumerable| CollectionCountConverter                  | Count()                          | Int or String       |Yes|No|No|
 |IEnumerable| CollectionFirstItemConverter              | First()                          | Object              |Yes|Yes|No|
 |IEnumerable| CollectionIndexOfConverter                | First()                          | Int or String       |No|Yes|No|
+|IEnumerable| CollectionNotEmptyToVisibilityConverter   | IsAny()                          | Visibility          |Yes|No|No|
 |Color| ColorToSolidColorBrushConverter           |                                  | SolidColorBrush     |Yes|No|No|
 |Image| ImageToBitmapImageConverter               |                                  | Bitmap              |Yes|No|No|
 |Double| MathConverter                             | +, -, *, /, %, ^, abs()          | Double or String    |Yes|Yes|No|
@@ -123,6 +124,13 @@ Returns the number of items the input collection contains.
  -  ***OutputAsString***: sets type of returned value (string or int). Default is false.
  -  ***DefaultCountValue***: to be returned in case the input is not iterable. Default is 0.
  - ***DefaultCountValueString***: to be returned in case the input is not iterable and ***OutputAsString*** is set. Default is "0".
+
+#### CollectionNotEmptyToVisibilityConverter
+Returns a visibility value depending on whether a collection is empty or stores at least an item.
+
+**Parameters**
+-  ***ValueWhenNotEmpty***: visibility to be returned when the input collection has at least an item. Default is Visibility.Visible.
+-  ***ValueForNullOrEmpty***: visibility to be returned when the collection is null or empty. Default is Visibility.Collapsed.
 
 #### CollectionFirstItemConverter
 Return the first item of a collection is any (default value otherwise).

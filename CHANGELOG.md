@@ -1,6 +1,7 @@
 # Changelog
 
 Added new converters:
+- CollectionNotEmptyToVisibilityConverter
 - EqualityToBooleanConverter
 - EqualityToVisibilityConverter
 
