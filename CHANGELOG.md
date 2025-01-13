@@ -1,12 +1,14 @@
 # Changelog
 
-Added new converters:
-- CollectionNotEmptyToVisibilityConverter
+## v2.0.4
+Update to .NET 9
+Add new converters:
 - EqualityToBooleanConverter
 - EqualityToVisibilityConverter
+- CollectionNotEmptyToVisibilityConverter
 
 ## v2.0.3
-Added new converters:
+Add new converters:
 - CamelCaseStringToTitleStringConverter
 - CornerRadiusToDoubleConverter
 - EnumMembersToDescriptionsConverter
@@ -15,14 +17,14 @@ Added new converters:
 - TypePropertiesToDescriptionsConverter
 
 ## v2.0.2
-Updated to .NET 5
+Update to .NET 5
 Minor API breaking changes: 
 - BooleanOperation.Xnor -> BooleanOperation.XNor
 - MathOperation.Substract -> MathOperation.Subtract
 - MathOperation.SubstractPositiveOnly -> MathOperation.SubtractPositiveOnly
 
 ## v2.0.1
-Updated minimum .Net Core version and package info for better visibility on Nuget feeds.
+Update minimum .Net Core version and package info for better visibility on Nuget feeds.
 
 ## v2.0.0
 Initial version for public release, comprising the following list of unit tested converters:

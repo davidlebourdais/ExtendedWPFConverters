@@ -1,25 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFrameworks>net5.0-windows;netcoreapp3.1;net471</TargetFrameworks>
+    <TargetFrameworks>net471;net8.0-windows;net9.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
 
     <AssemblyTitle>ExtendedWPFConverters</AssemblyTitle>
     <PackageId>ExtendedWPFConverters</PackageId>
-    <Version>2.0.3</Version>
+    <Version>2.0.4</Version>
     
     <Title>Extended WPF converters</Title>
     <PackageDescription>Proposes a list of commonly used converters for WPF.</PackageDescription>
     <PackageTags>WPF;Converters</PackageTags>
     <Authors>David Le Bourdais</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Copyright>Copyright © 2019-2021</Copyright>
+    <Copyright>Copyright © 2019-2025</Copyright>
     <RepositoryUrl>https://github.com/davidlebourdais/ExtendedWPFConverters</RepositoryUrl>
     
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
   </ItemGroup>
   
 </Project>
