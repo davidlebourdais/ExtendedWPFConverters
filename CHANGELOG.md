@@ -1,5 +1,7 @@
 # Changelog
 
+Fix some Collection based converters
+
 ## v2.0.4
 Update to .NET 9
 Add new converters:

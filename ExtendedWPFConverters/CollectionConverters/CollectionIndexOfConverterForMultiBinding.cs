@@ -48,7 +48,7 @@ namespace EMA.ExtendedWPFConverters
         /// in this collection if existing.
         /// </summary>
         /// <param name="values">The array of values that the source bindings in the MultiBinding produces. 
-        /// First item is the collection, second item is the index to retrieve.
+        /// First item is the collection, second item is the item to retrieve the index of.
         /// The value UnsetValue indicates that the source binding has no value to provide for conversion.</param>
         /// <param name="targetType">Unused.</param>
         /// <param name="parameter">Unused.</param>

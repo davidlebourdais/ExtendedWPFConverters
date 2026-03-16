@@ -7,21 +7,32 @@ using System.Windows.Markup;
 namespace EMA.ExtendedWPFConverters
 {
     /// <summary>
-    /// Returns the first value of a <see cref="IEnumerable"/>.
+    /// Returns the first item of a <see cref="IEnumerable"/>.
     /// </summary>
     public class CollectionFirstItemConverter : MarkupExtension, IValueConverter
     {
         /// <summary>
         /// Returns the first item of a <see cref="IEnumerable"/> input.
         /// </summary>
-        /// <param name="value">A <see cref="IEnumerable"/>> entry.</param>
+        /// <param name="value">A <see cref="IEnumerable"/> entry.</param>
         /// <param name="targetType">Unused.</param>
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
-        /// <returns>The first item of the collection or null if n.</returns>
+        /// <returns>The first item of the collection or null if none.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (value as IEnumerable)?.GetEnumerator().MoveNext();
+            if (!(value is IEnumerable enumerable))
+                return null;
+
+            var enumerator = enumerable.GetEnumerator();
+            try
+            {
+                return enumerator.MoveNext() ? enumerator.Current : null;
+            }
+            finally
+            {
+                (enumerator as IDisposable)?.Dispose();
+            }
         }
 
         /// <summary>

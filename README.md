@@ -46,10 +46,10 @@ All converters are supplied for one, two or three of the above families. Availab
 |Boolean| BooleanToVisibilityConverter              |                                  | Visibility          |Yes|Yes|No|
 |IEnumerable| CollectionCountConverter                  | Count()                          | Int or String       |Yes|No|No|
 |IEnumerable| CollectionFirstItemConverter              | First()                          | Object              |Yes|Yes|No|
-|IEnumerable| CollectionIndexOfConverter                | First()                          | Int or String       |No|Yes|No|
+|IEnumerable| CollectionIndexOfConverter                | IndexOf()                        | Int or String       |No|Yes|No|
 |IEnumerable| CollectionNotEmptyToVisibilityConverter   | IsAny()                          | Visibility          |Yes|No|No|
 |Color| ColorToSolidColorBrushConverter           |                                  | SolidColorBrush     |Yes|No|No|
-|Image| ImageToBitmapImageConverter               |                                  | Bitmap              |Yes|No|No|
+|Image| ImageToBitmapImageConverter               |                                  | BitmapImage         |Yes|No|No|
 |Double| MathConverter                             | +, -, *, /, %, ^, abs()          | Double or String    |Yes|Yes|No|
 |Object| InstanceToTypeConverter                   |                                  | Type                |Yes|No|No|
 |Object| ObjectToObjectConverter                   |                                  | Object              |No|No|Yes|
@@ -61,7 +61,7 @@ All converters are supplied for one, two or three of the above families. Availab
 |Type or Enum| EnumMembersToDescriptionsConverter        | DescriptionAttribute extractions | String[]            |Yes|No|No|
 |String| CamelCaseStringToTitleStringConverter     | String formatting                | String              |Yes|No|No|
 |String| NotNullOrEmptyStringToBooleanConverter    | !=null and !=empty               | Bool                |Yes|No|No|
-|String| NotNullOrEmptyStringToVisibilityConverter | !=null and !=empty               | Bool                |Yes|No|Yes|
+|String| NotNullOrEmptyStringToVisibilityConverter | !=null and !=empty               | Visibility          |Yes|No|Yes|
 |String| StringToHorizontalAlignmentConverter      |                                  | HorizontalAlignment |Yes|No|No|
 |String| StringToVerticalAlignmentConverter        |                                  | VerticalAlignment   |Yes|No|No|
 |Thickness| ThicknessToDoubleConverter                |                                  | Double              |Yes|No|No|
@@ -121,7 +121,7 @@ Note 3: Although settable, **ValueForTrue** and **ValueForFalse** cannot be chan
 Returns the number of items the input collection contains.
 
 **Parameters**
- -  ***OutputAsString***: sets type of returned value (string or int). Default is false.
+ -  ***OutputAsString***: sets type of returned value (string or int). Default is true.
  -  ***DefaultCountValue***: to be returned in case the input is not iterable. Default is 0.
  - ***DefaultCountValueString***: to be returned in case the input is not iterable and ***OutputAsString*** is set. Default is "0".
 
@@ -133,10 +133,10 @@ Returns a visibility value depending on whether a collection is empty or stores 
 -  ***ValueForNullOrEmpty***: visibility to be returned when the collection is null or empty. Default is Visibility.Collapsed.
 
 #### CollectionFirstItemConverter
-Return the first item of a collection is any (default value otherwise).
+Returns the first item of a collection if any (null otherwise).
 
 #### CollectionFirstItemConverterForMultibinding
-Returns the first item of a collection passed as first item or the first item of the multibinding as a whole. Useful to get notified by other binding within the multibinding without impacting the output value.
+Returns the first item of a collection passed as first item or the first item of the multibinding as a whole. Useful to get notified by other binding within the multibinding without impacting the output value. Returns null when the first bound collection is empty.
 
 **Parameters**
  -  ***AsIEnumerable***: indicates if first item of the first input collection must be returned, or if the first input must be returned as a whole. Default is true.
@@ -145,10 +145,10 @@ Returns the first item of a collection passed as first item or the first item of
 In a collection given as first input, returns the index of the element passed as a second input.
 
 **Parameters**
- -  ***OutputAsString***: sets type of returned value (string or int). Default is false.
+ -  ***OutputAsString***: sets type of returned value (string or int). Default is true.
  -  ***ValueForInvalid***: to be returned in case the collection is not iterable. Default is -1.
- -  ***ValueStringForInvalid***: to be returned in case the collection is not iterable. Default is -1.
- -  ***ValueForNotFound***: to be returned in case the collection does not contain the value and ***OutputAsString*** is set. Default is empty string.
+ -  ***ValueStringForInvalid***: to be returned in case the collection is not iterable and ***OutputAsString*** is set. Default is empty string.
+ -  ***ValueForNotFound***: to be returned in case the collection does not contain the value and ***OutputAsString*** is not set. Default is -1.
  - ***ValueStringForNotFound***: to be returned in case the collection does not contain the value and ***OutputAsString*** is set. Default is empty string.
  
 ### Color converters ("ColorToXXXXConverter")
@@ -283,8 +283,8 @@ Converts the content of a string from 'CamelCase' or 'camelCase' to 'Title Case'
 Returns a result depending on the state of a passed string (if null or empty).
 
 **Parameters**
- -  ***ValueForNullOrEmpty***: value to be returned when the input string is null or empty. Default is Visibility.Collapsed.
- -  ***ValueForNotNullOrEmpty***: value to be returned when the input is not null nor empty. Default is Visibility.Visible.
+ -  ***ValueForNullOrEmpty***: value to be returned when the input string is null or empty. Default is target-specific: false for *NotNullOrEmptyStringToBooleanConverter* and Visibility.Collapsed for *NotNullOrEmptyStringToVisibilityConverter*.
+ -  ***ValueForNotNullOrEmpty***: value to be returned when the input is not null nor empty. Default is target-specific: true for *NotNullOrEmptyStringToBooleanConverter* and Visibility.Visible for *NotNullOrEmptyStringToVisibilityConverter*.
 
 **Example**
 
@@ -330,4 +330,4 @@ Returns the TopLeft value of a corner radius.
 Hope you will enjoy these converters!
 
 ## License
-This work is licensed under the [MIT License](LICENSE.md).
+This work is licensed under the [MIT License](LICENSE).

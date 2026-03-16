@@ -86,10 +86,15 @@ namespace EMA.ExtendedWPFConverters.Tests
             if (input is IEnumerable enumerable)
             {
                 var enumerator = enumerable.GetEnumerator();
-                Assert.Equal(enumerator.MoveNext(), result);
-                
-                if (enumerator is IDisposable disposable)
-                    disposable.Dispose();
+                try
+                {
+                    Assert.Equal(enumerator.MoveNext() ? enumerator.Current : null, result);
+                }
+                finally
+                {
+                    if (enumerator is IDisposable disposable)
+                        disposable.Dispose();
+                }
             }
             else Assert.Null(result);
         }

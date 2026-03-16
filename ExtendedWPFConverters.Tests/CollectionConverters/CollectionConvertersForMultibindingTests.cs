@@ -14,6 +14,7 @@ namespace EMA.ExtendedWPFConverters.Tests
         {
             new object[] { new object[] { new List<object>() { 1, 2, 3}}, false },
             new object[] { new object[] { new List<object>() { 1, 2, 3}}, true },
+            new object[] { new object[] { new List<object>() }, true },
             new object[] { new object[] { "test" }, false },
             new object[] { new object[] { "test" }, true },
             new object[] { new object[] { "test1", "test2", "test3" }, false },
@@ -30,11 +31,31 @@ namespace EMA.ExtendedWPFConverters.Tests
         {
             var converter = new CollectionFirstItemConverterForMultiBinding() { AsIEnumerable = asIEnumerable };
             var result = converter.Convert(inputs, typeof(Color), null, null);
-            if (inputs.Any() && (asIEnumerable && inputs.First() is IEnumerable<object> || !asIEnumerable))
+            if (!inputs.Any())
             {
-                Assert.Equal(asIEnumerable ? (inputs.First() as IEnumerable<object>)?.First() : inputs.First(), result);
+                Assert.Null(result);
             }
-            else Assert.Null(result);
+            else if (!asIEnumerable)
+            {
+                Assert.Equal(inputs.First(), result);
+            }
+            else if (inputs.First() is IEnumerable enumerable)
+            {
+                var enumerator = enumerable.GetEnumerator();
+                try
+                {
+                    Assert.Equal(enumerator.MoveNext() ? enumerator.Current : null, result);
+                }
+                finally
+                {
+                    if (enumerator is IDisposable disposable)
+                        disposable.Dispose();
+                }
+            }
+            else
+            {
+                Assert.Null(result);
+            }
         }
         #endregion
 
