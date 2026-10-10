@@ -203,5 +203,28 @@ namespace EMA.ExtendedWPFConverters.Tests
         public void ConvertsObjectBackToBoolean(object input, object valueForTrue, object valueForFalse, object valueForInvalid, ReducedBooleanOperation operation)
             => TestConversionBack(new BooleanToObjectConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
         #endregion
+
+        #region BooleanToGridLengthConverter
+        public class GridLengthTestData : BooleanConverterBaseTestData<GridLength>
+        {
+            public new static IEnumerable<object[]> ConvertTestData => GenerateConvertTestData(new List<(GridLength, GridLength, GridLength)>()
+            {
+                ValueTuple.Create(GridLength.Auto, new GridLength(0), new GridLength(0)),
+                ValueTuple.Create(new GridLength(1, GridUnitType.Star), new GridLength(0), new GridLength(0)),
+                ValueTuple.Create(new GridLength(48), new GridLength(12), new GridLength(0)),
+                ValueTuple.Create(new GridLength(2, GridUnitType.Star), GridLength.Auto, new GridLength(0))
+            });
+        }
+
+        [Theory]
+        [MemberData(nameof(GridLengthTestData.ConvertTestData), MemberType = typeof(GridLengthTestData))]
+        public void ConvertsBooleanToGridLength(object input, GridLength valueForTrue, GridLength valueForFalse, GridLength valueForInvalid, ReducedBooleanOperation operation)
+            => TestConversion(new BooleanToGridLengthConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+
+        [Theory]
+        [MemberData(nameof(GridLengthTestData.ConvertBackTestData), MemberType = typeof(GridLengthTestData))]
+        public void ConvertsGridLengthBackToBoolean(object input, GridLength valueForTrue, GridLength valueForFalse, GridLength valueForInvalid, ReducedBooleanOperation operation)
+            => TestConversionBack(new BooleanToGridLengthConverter(), input, valueForTrue, valueForFalse, valueForInvalid, operation);
+        #endregion
     }
 }

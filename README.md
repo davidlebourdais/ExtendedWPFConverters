@@ -6,6 +6,8 @@
 
 Provides a set of commonly used and tested converters to build WPF applications.
 
+Support policy: LTS .NET Windows targets are the long-term compatibility baseline; STS targets can be added or removed between minor releases when useful.
+
 ## Notions
 
 > Note: this is important to grasp the notions in order to quickly find a
@@ -42,8 +44,11 @@ All converters are supplied for one, two or three of the above families. Availab
 |Boolean| BooleanToObjectConverter                  |                                  | Object              |Yes|No|No|
 |Boolean| BooleanToNumberConverter                  |                                  | IComparable         |Yes|No|No|
 |Boolean| BooleanToOpacityConverter                 |                                  | Double              |Yes|No|No|
+|Boolean| BooleanToGridLengthConverter             |                                  | GridLength          |Yes|No|No|
+|Boolean| BooleanToSolidColorBrushConverter         |                                  | SolidColorBrush     |Yes|No|No|
 |Boolean| BooleanToThicknessConverter               |                                  | Thickness           |Yes|No|No|
 |Boolean| BooleanToVisibilityConverter              |                                  | Visibility          |Yes|Yes|No|
+|IEnumerable| CollectionContainsConverter              | Contains()                       | Boolean             |No|Yes|No|
 |IEnumerable| CollectionCountConverter                  | Count()                          | Int or String       |Yes|No|No|
 |IEnumerable| CollectionFirstItemConverter              | First()                          | Object              |Yes|Yes|No|
 |IEnumerable| CollectionIndexOfConverter                | IndexOf()                        | Int or String       |No|Yes|No|
@@ -51,17 +56,26 @@ All converters are supplied for one, two or three of the above families. Availab
 |Color| ColorToSolidColorBrushConverter           |                                  | SolidColorBrush     |Yes|No|No|
 |Image| ImageToBitmapImageConverter               |                                  | BitmapImage         |Yes|No|No|
 |Double| MathConverter                             | +, -, *, /, %, ^, abs()          | Double or String    |Yes|Yes|No|
+|Double| DoubleToThicknessConverter                |                                  | Thickness           |Yes|No|No|
+|Double| DoubleToCornerRadiusConverter             |                                  | CornerRadius        |Yes|No|No|
+|Double| DoubleToGridLengthConverter               |                                  | GridLength          |Yes|No|No|
+|GridLength| GridLengthToDoubleConverter             |                                  | Double              |Yes|No|No|
 |Object| InstanceToTypeConverter                   |                                  | Type                |Yes|No|No|
 |Object| ObjectToObjectConverter                   |                                  | Object              |No|No|Yes|
+|Object| ComparisonToBooleanConverter              | Comparison                       | Boolean             |Yes|No|No|
+|Object| ComparisonToVisibilityConverter           | Comparison                       | Visibility          |Yes|No|No|
 |Object| EqualityToBooleanConverter                | Equality                         | Boolean             |Yes|No|No|
 |Object| EqualityToVisibilityConverter             | Equality                         | Visibility          |Yes|No|No|
 |Object| NotNullToVisibilityConverter              | !=null                           | Visibility          |Yes|No|No|
 |Type| TypePropertiesToDescriptionsConverter     | DescriptionAttribute extractions | String[]            |Yes|No|No|
+|Enum| EnumToBooleanConverter                    | Equality                         | Boolean             |Yes|No|No|
 |Enum| EnumValueToDescriptionConverter           | DescriptionAttribute extraction  | String              |Yes|No|No|
 |Type or Enum| EnumMembersToDescriptionsConverter        | DescriptionAttribute extractions | String[]            |Yes|No|No|
 |String| CamelCaseStringToTitleStringConverter     | String formatting                | String              |Yes|No|No|
 |String| NotNullOrEmptyStringToBooleanConverter    | !=null and !=empty               | Bool                |Yes|No|No|
 |String| NotNullOrEmptyStringToVisibilityConverter | !=null and !=empty               | Visibility          |Yes|No|Yes|
+|String| NotNullOrWhiteSpaceStringToBooleanConverter    | !=null and !=white-space         | Bool                |Yes|No|No|
+|String| NotNullOrWhiteSpaceStringToVisibilityConverter | !=null and !=white-space         | Visibility          |Yes|No|No|
 |String| StringToHorizontalAlignmentConverter      |                                  | HorizontalAlignment |Yes|No|No|
 |String| StringToVerticalAlignmentConverter        |                                  | VerticalAlignment   |Yes|No|No|
 |Thickness| ThicknessToDoubleConverter                |                                  | Double              |Yes|No|No|
@@ -115,7 +129,23 @@ Note 2: backward conversion is referenced on *ValueForTrue* (or parameter) value
 
 Note 3: Although settable, **ValueForTrue** and **ValueForFalse** cannot be changed on **BooleanToBooleanConverter** for developer experience considerations.
 
+#### BooleanToSolidColorBrushConverter
+Returns a solid color brush using the common boolean converter parameters above. Defaults are Brushes.Black for **ValueForTrue** and Brushes.Transparent for **ValueForFalse** and **ValueForInvalid**.
+
+**Example**
+
+    <Border Background="{Binding SomeBoolProperty, Converter={extconv:BooleanToSolidColorBrushConverter ValueForTrue=Green, ValueForFalse=Red}}" />
+
+Backward conversion compares brush instances, following the boolean converter base. A different brush with the same color does not match the configured brush.
+
 ### Collection converters ("CollectionXXXX")
+
+#### CollectionContainsConverterForMultiBinding
+In a collection given as first input, returns whether the element passed as second input is contained in the collection.
+
+**Parameters**
+ -  ***TrueIfNotContains***: inverts the result if set. Default is false.
+ -  ***ValueForInvalid***: to be returned in case the first input is not iterable, either input binding is unresolved, or the multibinding does not provide enough values. This value is returned without inversion. Default is false.
 
 #### CollectionCountConverter
 Returns the number of items the input collection contains.
@@ -197,6 +227,19 @@ Performs a mathematical operation over a single input and the converter paramete
 
 Originally inspired by [MaterialDesignInXamlToolkit](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)'s MathConverter
 
+#### ThicknessMathConverter
+Applies the selected mathematical operation to each side of an input thickness, using the same scalar converter parameter for all four sides. Accepts numbers and numeric strings using the same parsing rules as *MathConverter*.
+
+**Parameters**
+ -  ***Operation***: a *MathOperation* to apply to each side. Default is None. None and Absolute ignore the converter parameter.
+ -  ***ValueForInvalid***: returned when the input is not a thickness or the scalar parameter is invalid. Default is null.
+
+**Example**
+
+    <Border Margin="{Binding SomeThickness, Converter={extconv:ThicknessMathConverter Operation=Multiply}, ConverterParameter=2}" />
+
+Backward conversion supports None, Add, Subtract, Multiply and Divide. Multiply and Divide return *ValueForInvalid* when the scalar parameter is zero. Absolute, SubtractPositiveOnly, Modulo and Power throw *NotSupportedException* on backward conversion because their inverse is ambiguous. Forward division by zero follows *MathConverter* and can return infinite or NaN side values.
+
 ### Misc. converters 
 
 #### InstanceToTypeConverter
@@ -221,6 +264,23 @@ Returns a visibility value corresponding to value-parameter equality.
  -  ***TrueIfNotEqual***: reverts result if set. Default is false.
  -  ***VisibilityForTrue***: visibility to be returned when equality (or inequality if TrueIfNotEqual is set) is verified. Default is Visibility.Visible.
  -  ***VisibilityForFalse***: visibility to be returned when inequality (or equality if TrueIfNotEqual is set) is verified. Default is Visibility.Collapsed.
+
+#### ComparisonToBooleanConverter
+Returns a boolean resulting from comparing the input value to the converter parameter.
+Numeric comparisons preserve each operand's precision. Numeric strings use invariant formatting; two string operands are compared as text.
+
+**Parameters**
+ -  ***Operation***: comparison operation to apply. Allowed values are Equal, NotEqual, GreaterThan, GreaterThanOrEqual, LessThan and LessThanOrEqual. Default is Equal.
+ -  ***ValueForInvalid***: value to be returned when the input and parameter cannot be compared. Default is false.
+
+#### ComparisonToVisibilityConverter
+Returns a visibility value resulting from comparing the input value to the converter parameter.
+
+**Parameters**
+ -  ***Operation***: comparison operation to apply. Allowed values are Equal, NotEqual, GreaterThan, GreaterThanOrEqual, LessThan and LessThanOrEqual. Default is Equal.
+ -  ***VisibilityForTrue***: visibility to be returned when the comparison succeeds. Default is Visibility.Visible.
+ -  ***VisibilityForFalse***: visibility to be returned when the comparison fails. Default is Visibility.Collapsed.
+ -  ***ValueForInvalid***: visibility to be returned when the input and parameter cannot be compared. Default is Visibility.Collapsed.
 
 ### 'Not null' converters (NotNullToXXXXConverter)
 
@@ -247,6 +307,16 @@ Extracts a list DescriptionAttribute.Description from the public properties of a
     <ComboBox ItemsSource="{Binding SomeType, Converter={extconv:TypePropertiesToDescriptionsConverter}}"/>
 
 ### Enum converters ("EnumXXXXConverter")
+
+#### EnumToBooleanConverter
+Returns true if the input enum value matches the converter parameter.
+
+**Parameters**
+ -  ***ValueForInvalid***: value to be returned when input or parameter cannot be interpreted as enum values. Default is false.
+
+**About**
+
+Converter parameter can be passed either as an enum value or as a string matching the enum member name. This converter supports backward conversion and is especially useful to bind enum values to RadioButton.IsChecked.
 
 #### EnumValueToDescriptionConverter
 Extracts the DescriptionAttribute.Description value from an enum item.
@@ -290,6 +360,17 @@ Returns a result depending on the state of a passed string (if null or empty).
 
     <TextBox Text="{Binding SomeText}" Visibility="{Binding SomeText, Converter={extconv:NotNullOrEmptyStringToVisibilityConverter}}" />
 
+#### NotNullOrWhiteSpaceStringToXXXXConverter
+Returns a result depending on the state of a passed string (if null, empty or white-space only).
+
+**Parameters**
+ -  ***ValueForNullOrWhiteSpace***: value to be returned when the input string is null, empty or white-space only. Default is target-specific: false for *NotNullOrWhiteSpaceStringToBooleanConverter* and Visibility.Collapsed for *NotNullOrWhiteSpaceStringToVisibilityConverter*.
+ -  ***ValueForNotNullOrWhiteSpace***: value to be returned when the input contains at least one non-white-space character. Default is target-specific: true for *NotNullOrWhiteSpaceStringToBooleanConverter* and Visibility.Visible for *NotNullOrWhiteSpaceStringToVisibilityConverter*.
+
+**Example**
+
+    <TextBlock Visibility="{Binding SomeText, Converter={extconv:NotNullOrWhiteSpaceStringToVisibilityConverter}}" />
+
 #### StringToHorizontalAlignmentConverter & StringToVerticalAlignmentConverter
 Parses a string to produce an alignment (horizontal or vertical) value. Returns null if parsing fails.
 
@@ -305,6 +386,32 @@ Parses a string to produce an alignment (horizontal or vertical) value. Returns 
 > These converters support bidirectional string translations when a proper translation fetcher is provided as converter parameter and a culture information is set for the application. See the list of accepted types for this fetcher in the documentation of the [CheckFetcherFormat method](ExtendedWPFConverters/StringConverters/Utils/StringTranslationHelper.cs).
 
 ### Geometry converters
+
+#### DoubleToThicknessConverter
+Returns a uniform thickness from a double value.
+
+**Parameter**
+ -  ***ThrowOnNonUniformThickness***: if set, throws an exception when trying to convert back a thickness with non-uniform values. Default is false.
+
+#### DoubleToCornerRadiusConverter
+Returns a uniform corner radius from a double value.
+
+**Parameter**
+ -  ***ThrowOnNonUniformCornerRadius***: if set, throws an exception when trying to convert back a corner radius with non-uniform values. Default is false.
+
+#### DoubleToGridLengthConverter
+Returns a grid length from a double value.
+
+**Parameters**
+ -  ***GridUnitType***: grid unit type to be applied on conversion. Allowed values are Pixel, Star and Auto. Default is Pixel.
+ -  ***ThrowOnNonAbsoluteGridLength***: if set, throws an exception when trying to convert back a non-absolute grid length. Default is false.
+
+#### GridLengthToDoubleConverter
+Returns the Value of a grid length.
+
+**Parameters**
+ -  ***ThrowOnNonAbsoluteGridLength***: if set, throws an exception when trying to convert a non-absolute grid length. Default is false.
+ -  ***GridUnitType***: grid unit type to be applied on backward conversion. Allowed values are Pixel, Star and Auto. Default is Pixel.
 
 #### ThicknessToDoubleConverter
 Returns the Left value of a thickness.

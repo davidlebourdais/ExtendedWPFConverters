@@ -3,6 +3,7 @@ using System.Linq;
 using Xunit;
 using System.Collections;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Media;
 
 namespace EMA.ExtendedWPFConverters.Tests
@@ -153,6 +154,89 @@ namespace EMA.ExtendedWPFConverters.Tests
                     Assert.Equal(valueStringForInvalid, result);
                 else Assert.Equal(valueForInvalid, result);   
             }
+        }
+        #endregion
+
+        #region CollectionContainsConverterForMultiBinding
+        public static IEnumerable<object[]> CollectionContainsData => new List<object[]>
+        {
+            new object[] { new object[] { new List<object>() { 1, 2, 3 }, 1 }, false, false },
+            new object[] { new object[] { new List<object>() { 1, 2, 3 }, 4 }, false, false },
+            new object[] { new object[] { new List<object>() { 1, null, 3 }, null }, false, false },
+            new object[] { new object[] { "test", 's' }, false, false },
+            new object[] { new object[] { "test", 'z' }, false, false },
+            new object[] { new object[] { new[] { "alpha", "beta" }.AsEnumerable(), "beta" }, false, false },
+            new object[] { new object[] { new[] { "alpha", "beta" }.AsEnumerable(), "gamma" }, false, false },
+
+            new object[] { new object[] { new List<object>() { 1, 2, 3 }, 1 }, true, false },
+            new object[] { new object[] { new List<object>() { 1, 2, 3 }, 4 }, true, false },
+            new object[] { new object[] { null, 1 }, false, false },
+            new object[] { new object[] { 123, 1 }, false, false },
+            new object[] { new object[] { new List<object>() { 1, 2, 3 } }, false, true }
+        };
+
+        [Theory]
+        [MemberData(nameof(CollectionContainsData))]
+        public void ConvertsCollectionToContains(object[] inputs, bool trueIfNotContains, bool valueForInvalid)
+        {
+            var converter = new CollectionContainsConverterForMultiBinding()
+            {
+                TrueIfNotContains = trueIfNotContains,
+                ValueForInvalid = valueForInvalid
+            };
+
+            var result = converter.Convert(inputs, typeof(Color), null, null);
+
+            if (inputs.Length < 2 || !(inputs[0] is IEnumerable enumerable))
+            {
+                Assert.Equal(valueForInvalid, result);
+                return;
+            }
+
+            var contains = false;
+            foreach (var item in enumerable)
+            {
+                if (Equals(item, inputs[1]))
+                {
+                    contains = true;
+                    break;
+                }
+            }
+
+            Assert.Equal(trueIfNotContains ? !contains : contains, result);
+        }
+
+        public static IEnumerable<object[]> CollectionContainsUnresolvedData
+        {
+            get
+            {
+                var unresolved = DependencyProperty.UnsetValue;
+                var inputs = new[]
+                {
+                    new object[] { new[] { 1, 2, 3 }, unresolved },
+                    new object[] { Enumerable.Range(1, 3).Where(item => true), unresolved },
+                    new object[] { new[] { unresolved }, unresolved },
+                    new object[] { unresolved, 1 }
+                };
+
+                foreach (var input in inputs)
+                    foreach (var trueIfNotContains in new[] { false, true })
+                        foreach (var valueForInvalid in new[] { false, true })
+                            yield return new object[] { input, trueIfNotContains, valueForInvalid };
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(CollectionContainsUnresolvedData))]
+        public void ReturnsConfiguredInvalidValueForUnresolvedCollectionBindings(object[] inputs, bool trueIfNotContains, bool valueForInvalid)
+        {
+            var converter = new CollectionContainsConverterForMultiBinding()
+            {
+                TrueIfNotContains = trueIfNotContains,
+                ValueForInvalid = valueForInvalid
+            };
+
+            Assert.Equal(valueForInvalid, converter.Convert(inputs, typeof(bool), null, null));
         }
         #endregion
     }

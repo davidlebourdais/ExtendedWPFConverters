@@ -1,6 +1,21 @@
 # Changelog
 
-Fix some Collection based converters
+## Next
+Fix some Collection based converters.
+Add new converters:
+- BooleanToGridLengthConverter
+- BooleanToSolidColorBrushConverter
+- CollectionContainsConverterForMultiBinding
+- ComparisonToBooleanConverter
+- ComparisonToVisibilityConverter
+- DoubleToCornerRadiusConverter
+- DoubleToGridLengthConverter
+- DoubleToThicknessConverter
+- EnumToBooleanConverter
+- GridLengthToDoubleConverter
+- ThicknessMathConverter
+- NotNullOrWhiteSpaceStringToBooleanConverter
+- NotNullOrWhiteSpaceStringToVisibilityConverter
 
 ## v2.0.4
 Update to .NET 9
