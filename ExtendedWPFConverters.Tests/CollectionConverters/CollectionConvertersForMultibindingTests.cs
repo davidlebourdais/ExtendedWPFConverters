@@ -120,7 +120,7 @@ namespace EMA.ExtendedWPFConverters.Tests
 
             var result = converter.Convert(inputs, typeof(Color), null, null);
 
-            if (inputs.First() is IEnumerable asEnumerable && inputs.Length > 1 && inputs[1] != null)
+            if (inputs.First() is IEnumerable asEnumerable && inputs.Length > 1)
             {
                 var count = 0;
                 bool stopped;
@@ -130,7 +130,7 @@ namespace EMA.ExtendedWPFConverters.Tests
                 do
                 {
                     stopped = !enumerator.MoveNext();
-                    if (!stopped && enumerator.Current?.Equals(inputs[1]) == true)
+                    if (!stopped && Equals(enumerator.Current, inputs[1]))
                         found = true;
                     else count++;
                 } while (!stopped && !found);
@@ -156,6 +156,161 @@ namespace EMA.ExtendedWPFConverters.Tests
             }
         }
         #endregion
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void IndexOfReturnsInvalidFallbackForMissingOrNonEnumerableInputs(bool outputAsString)
+        {
+            var converter = new CollectionIndexOfConverterForMultiBinding
+            {
+                OutputAsString = outputAsString,
+                ValueForInvalid = -23,
+                ValueStringForInvalid = "invalid",
+                ValueForNotFound = -17,
+                ValueStringForNotFound = "not found"
+            };
+            var inputs = new object[][]
+            {
+                null,
+                new object[0],
+                new object[] { new object[0] },
+                new object[] { null, "target" },
+                new object[] { 123, "target" }
+            };
+
+            foreach (var input in inputs)
+                Assert.Equal(outputAsString ? (object)"invalid" : -23,
+                    converter.Convert(input, typeof(object), null, null));
+        }
+
+        [Theory]
+        [InlineData(false, false, false)]
+        [InlineData(false, false, true)]
+        [InlineData(false, true, false)]
+        [InlineData(false, true, true)]
+        [InlineData(true, false, false)]
+        [InlineData(true, false, true)]
+        [InlineData(true, true, false)]
+        [InlineData(true, true, true)]
+        public void IndexOfUsesInvalidFallbackForUnresolvedSearches(bool outputAsString, bool useEnumerable, bool containsUnsetValue)
+        {
+            var items = containsUnsetValue
+                ? new object[] { "before", DependencyProperty.UnsetValue, null }
+                : new object[] { "before", "after", null };
+            IEnumerable collection = useEnumerable ? EnumerateIndexOfItems(items) : items;
+            Assert.Equal(!useEnumerable, collection is IList);
+            var converter = new CollectionIndexOfConverterForMultiBinding
+            {
+                OutputAsString = outputAsString,
+                ValueForInvalid = -23, ValueStringForInvalid = "invalid",
+                ValueForNotFound = -17, ValueStringForNotFound = "not found"
+            };
+
+            Assert.Equal(outputAsString ? (object)"invalid" : -23,
+                converter.Convert(new object[] { collection, DependencyProperty.UnsetValue }, typeof(object), null, null));
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void IndexOfRejectsUnresolvedSearchesBeforeEnumerating(bool outputAsString)
+        {
+            var converter = new CollectionIndexOfConverterForMultiBinding
+            {
+                OutputAsString = outputAsString,
+                ValueForInvalid = -23, ValueStringForInvalid = "invalid"
+            };
+
+            Assert.Equal(outputAsString ? (object)"invalid" : -23,
+                converter.Convert(new object[] { new ThrowingIndexOfEnumerable(), DependencyProperty.UnsetValue }, typeof(object), null, null));
+        }
+
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public void IndexOfDoesNotTreatOrdinaryObjectsAsUnresolvedByEquality(bool outputAsString, bool useEnumerable)
+        {
+            var searchItem = new AlwaysEqualIndexOfItem();
+            Assert.True(searchItem.Equals(DependencyProperty.UnsetValue));
+            var items = new object[] { searchItem };
+            IEnumerable collection = useEnumerable ? EnumerateIndexOfItems(items) : items;
+            var converter = new CollectionIndexOfConverterForMultiBinding
+            {
+                OutputAsString = outputAsString,
+                ValueForInvalid = -23, ValueStringForInvalid = "invalid"
+            };
+
+            Assert.Equal(outputAsString ? (object)"0" : 0,
+                converter.Convert(new object[] { collection, searchItem }, typeof(object), null, null));
+        }
+
+        private sealed class ThrowingIndexOfEnumerable : IEnumerable
+        {
+            public IEnumerator GetEnumerator() => throw new InvalidOperationException("An unresolved search must not enumerate the collection.");
+        }
+
+        private sealed class AlwaysEqualIndexOfItem
+        {
+            public override bool Equals(object obj) => true;
+            public override int GetHashCode() => 0;
+        }
+
+        public static IEnumerable<object[]> CollectionIndexOfNullData
+        {
+            get
+            {
+                var cases = new[]
+                {
+                    new object[] { new object[] { null, "target", null }, null, 0 },
+                    new object[] { new object[] { "before", null, null }, null, 1 },
+                    new object[] { new object[] { null, "target", "target" }, "target", 1 },
+                    new object[] { new object[] { null, "target" }, "missing", -17 },
+                    new object[] { new object[] { "before" }, null, -17 },
+                    new object[] { new object[0], null, -17 }
+                };
+
+                foreach (var testCase in cases)
+                    foreach (var outputAsString in new[] { false, true })
+                        foreach (var useEnumerable in new[] { false, true })
+                            yield return new[] { testCase[0], testCase[1], testCase[2], outputAsString, useEnumerable };
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(CollectionIndexOfNullData))]
+        public void IndexOfHandlesNullItemsAndReturnsFirstMatchOrNotFound(
+            object[] items, object searchItem, int expectedIndex, bool outputAsString, bool useEnumerable)
+        {
+            IEnumerable collection = useEnumerable ? EnumerateIndexOfItems(items) : items;
+            if (useEnumerable)
+                Assert.False(collection is IList);
+            else
+                Assert.IsAssignableFrom<IList>(collection);
+
+            var converter = new CollectionIndexOfConverterForMultiBinding
+            {
+                OutputAsString = outputAsString,
+                ValueForInvalid = -23,
+                ValueStringForInvalid = "invalid",
+                ValueForNotFound = -17,
+                ValueStringForNotFound = "not found"
+            };
+
+            var result = converter.Convert(new object[] { collection, searchItem }, typeof(object), null, null);
+            var expected = outputAsString
+                ? (object)(expectedIndex < 0 ? "not found" : expectedIndex.ToString())
+                : expectedIndex;
+            Assert.Equal(expected, result);
+        }
+
+        private static IEnumerable<object> EnumerateIndexOfItems(object[] items)
+        {
+            foreach (var item in items)
+                yield return item;
+        }
 
         #region CollectionContainsConverterForMultiBinding
         public static IEnumerable<object[]> CollectionContainsData => new List<object[]>

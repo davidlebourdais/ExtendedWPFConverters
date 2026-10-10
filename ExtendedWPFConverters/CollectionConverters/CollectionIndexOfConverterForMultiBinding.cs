@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 using System.Collections;
@@ -31,14 +32,14 @@ namespace EMA.ExtendedWPFConverters
         public string ValueStringForNotFound { get; set; } = "";
 
         /// <summary>
-        /// Gets or sets the default value to be returned when passed input value
-        /// is not iterable.
+        /// Gets or sets the default value to be returned when the collection or input array
+        /// is invalid, or a source binding is unresolved.
         /// </summary>
         public int ValueForInvalid { get; set; } = -1;
         
         /// <summary>
-        /// Gets or sets the default value to be returned when passed input value
-        /// is not iterable.
+        /// Gets or sets the default value to be returned when the collection or input array
+        /// is invalid, or a source binding is unresolved.
         /// <remarks>Used when <see cref="OutputAsString"/> is set.null</remarks>
         /// </summary>
         public string ValueStringForInvalid { get; set; } = "";
@@ -49,16 +50,18 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="values">The array of values that the source bindings in the MultiBinding produces. 
         /// First item is the collection, second item is the item to retrieve the index of.
-        /// The value UnsetValue indicates that the source binding has no value to provide for conversion.</param>
+        /// A null search item is valid and matches the first null element, if present.
+        /// UnsetValue in either source binding returns the configured invalid-input fallback.</param>
         /// <param name="targetType">Unused.</param>
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>The index of the item in the given collection, if any.</returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values.Length < 2 || values[0] == null || values[1] == null) return OutputAsString ? (object)ValueStringForInvalid : ValueForInvalid;
+            if (values == null || values.Length < 2) return OutputAsString ? (object)ValueStringForInvalid : ValueForInvalid;
 
-            if (!(values[0] is IEnumerable collection)) return OutputAsString ? (object)ValueStringForInvalid : ValueForInvalid;
+            if (!(values[0] is IEnumerable collection) || ReferenceEquals(values[1], DependencyProperty.UnsetValue))
+                return OutputAsString ? (object)ValueStringForInvalid : ValueForInvalid;
 
             // If collection is a list, deal with index:
             if (values[0] is IList list)
@@ -75,7 +78,7 @@ namespace EMA.ExtendedWPFConverters
             var index = 0;
             foreach (var item in collection)
             {
-                if (item.Equals(values[1]))
+                if (Equals(item, values[1]))
                     return OutputAsString ? (object)index.ToString() : index;
 
                 index++;

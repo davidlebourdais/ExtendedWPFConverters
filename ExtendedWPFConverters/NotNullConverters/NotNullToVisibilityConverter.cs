@@ -12,26 +12,29 @@ namespace EMA.ExtendedWPFConverters
     public class NotNullToVisibilityConverter : MarkupExtension, IValueConverter
     {
         /// <summary>
-        /// Value to be applied when converted value is null.
+        /// Value to be applied when converted value is null, DependencyProperty.UnsetValue or Binding.DoNothing.
         /// </summary>
         public Visibility ValueForNull { get; set; } = Visibility.Collapsed;
 
         /// <summary>
-        /// Value to be applied when converted value is not null.
+        /// Value to be applied when converted value is a non-null object rather than a marker for unresolved or suppressed bindings.
         /// </summary>
         public Visibility ValueForNotNull { get; set; } = Visibility.Visible;
 
         /// <summary>
-        /// Returns <see cref="Visibility"/> value that correspond to the entry (null so not visible, not null so visible).
+        /// Returns ValueForNull for null or markers for unresolved or suppressed bindings; otherwise returns ValueForNotNull.
         /// </summary>
-        /// <param name="value">An entry that can be null.</param>
+        /// <param name="value">An entry that can be null, DependencyProperty.UnsetValue or Binding.DoNothing.</param>
         /// <param name="targetType">Unused.</param>
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>The <see cref="Visibility"/> value corresponding to the entry state.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value != null ? ValueForNotNull : ValueForNull;
+            if (value == null || ReferenceEquals(value, DependencyProperty.UnsetValue) || ReferenceEquals(value, Binding.DoNothing))
+                return ValueForNull;
+
+            return ValueForNotNull;
         }
 
         /// <summary>
