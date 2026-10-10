@@ -18,5 +18,19 @@ namespace EMA.ExtendedWPFConverters.Tests
             
             Assert.Equal(expected, result);
         }
+
+        [Fact]
+        public void NullInputArrayReturnsDefaultOrConfiguredInvalidFallback()
+        {
+            var converter = new ObjectToObjectConverterWithActivators();
+            Assert.Null(converter.Convert(null, typeof(object), null, null));
+
+            var fallback = new object();
+            converter.ValueForInvalid = fallback;
+            Assert.Same(fallback, converter.Convert(null, typeof(object), null, null));
+
+            // An empty array keeps its existing null result, distinct from a missing array.
+            Assert.Null(converter.Convert(new object[0], typeof(object), null, null));
+        }
     }
 }

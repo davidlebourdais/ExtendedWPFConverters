@@ -26,7 +26,7 @@ namespace EMA.ExtendedWPFConverters.Tests
             new object[] { "invalid", null, null, null },
             new object[] { 1, null, null, null },
             new object[] { null, null, null, null },
-            new object[] { "Droite", null, new TranslationFetcherProvider(_translations, _culture).FetchMethod, null },
+            new object[] { "Droite", HorizontalAlignment.Right, new TranslationFetcherProvider(_translations, _culture).FetchMethod, null },
             new object[] { "Droite", null, new TranslationFetcherProvider(_translations, _culture).FetchMethodWithCulture, new CultureInfo("en-US") },
             new object[] { "Droite", HorizontalAlignment.Right, new TranslationFetcherProvider(_translations, _culture).FetchMethodWithCulture, new CultureInfo("fr-FR") },
             new object[] { "Droite", HorizontalAlignment.Right, new TranslationFetcherProvider(_translations, _culture).FetchDictionary, new CultureInfo("fr-FR") },

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace EMA.ExtendedWPFConverters
         /// Checks if passed translation retriever object type is supported by the helper methods.
         /// </summary>
         /// <param name="translationGetter">A object to check for compatibility.</param>
-        /// <param name="bidirectionalOnly">If set to true, filter out types that support one-way translations.</param>
+        /// <param name="bidirectionalOnly">If true, reject all one-way fetcher types; if false, accept both one-way and bidirectional types.</param>
         /// <returns>True if passed object type matches supported types in this helper class.</returns>
         /// <remarks>The translation getter could be a one-way fetcher when its type is:
         /// - a Func{string, string} that accepts the value as input and returns the corresponding translation
@@ -25,7 +25,7 @@ namespace EMA.ExtendedWPFConverters
         /// - a IDict{CultureInfo culture, Func{string, string}} which contains the current culture information as culture key and points to a function that accepts the 
         ///   value as input and returns the corresponding translation 
         /// Or translation getter can be a bidirectional converter with an additional bool parameter which inverts the translation process if set to true:
-        /// - a Func{string, bool, string} that accepts the value as input and returns the corresponding translation when bool is true, do the opposite if false
+        /// - a Func{string, bool, string} that accepts the value as input and translates forward when bool is false, backward when true
         /// - a Func{string, CultureInfo, bool, string} that accepts the value and the current CultureInfo as input and returns the corresponding translation
         /// - a IDict{string culture, Func{string, bool, string}} which contains the current culture's TwoLetterISOLanguageName or ThreeLetterISOLanguageName as culture key
         ///   and points to a function that accepts the value as input and returns the corresponding translation 
@@ -38,10 +38,10 @@ namespace EMA.ExtendedWPFConverters
         /// use the value to translate as key.
         /// </remarks>
         public static bool CheckFetcherFormat(object translationGetter, bool bidirectionalOnly = false)
-            => (!bidirectionalOnly && translationGetter is Func<string, string> 
+            => (!bidirectionalOnly && (translationGetter is Func<string, string>
                     || translationGetter is Func<string, CultureInfo, string> 
                     || translationGetter is IDictionary<string, Func<string, string>> 
-                    || translationGetter is IDictionary<CultureInfo, Func<string, string>>)           
+                    || translationGetter is IDictionary<CultureInfo, Func<string, string>>))
                     || translationGetter is Func<string, bool, string> 
                     || translationGetter is Func<string, CultureInfo, bool, string> 
                     || translationGetter is IDictionary<string, Func<string, bool, string>> 

@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Markup;
-using EMA.ExtendedWPFConverters.Utils;
 
 namespace EMA.ExtendedWPFConverters
 {
@@ -19,20 +18,14 @@ namespace EMA.ExtendedWPFConverters
         public MathOperation Operation { get; set; }
 
         /// <summary>
-        /// Value to be applied when converted value is null or is not a boolean.
+        /// Value returned when a required operand cannot be interpreted as a number. Defaults to null.
         /// </summary>
         public object ValueForInvalid { get; set; } = null;
 
         /// <summary>
-        /// Indicates if the output should be a double or a string.
+        /// Indicates if the forward output should be a double or a string.
         /// </summary>
         public bool OutputAsString { get; set; } = false;
-
-        /// <summary>
-        /// Private. Indicates if the input is a double or a string.
-        /// </summary>
-        /// <remarks>Used only for convert back method.</remarks>
-        private bool InputAsString { get; set; }
 
         /// <summary>
         /// Performs a mathematical operation between entry and parameter and returns the result.
@@ -40,13 +33,11 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="value">A numerical value.</param>
         /// <param name="targetType">Unused.</param>
         /// <param name="parameter">A numerical value.</param>
-        /// <param name="culture">Unused.</param>
+        /// <param name="culture">Culture used for string output; forward numeric parsing uses invariant formatting after comma replacement.</param>
         /// <returns>The result of the parameterized mathematical operation between entry and the parameter.</returns>
         /// <exception cref="NotSupportedException">Thrown if the math operation is not supported.</exception>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            InputAsString = value is string;
-
             if(value == null || !double.TryParse(value.ToString()?.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var value1)) 
                 return ValueForInvalid;
 
@@ -94,16 +85,22 @@ namespace EMA.ExtendedWPFConverters
         }
 
         /// <summary>
-        /// Performs an inverse mathematical operation on the entry and a passed parameter and returns the result.
+        /// Applies the configured reverse operation to the entry and parameter.
+        /// Lossy operations do not generally reconstruct the original input.
         /// </summary>
         /// <param name="value">A numerical value.</param>
-        /// <param name="targetType">Unused.</param>
+        /// <param name="targetType">The source type: string requests formatted text; other types receive a double.</param>
         /// <param name="parameter">A numerical value.</param>
-        /// <param name="culture">Unused.</param>
-        /// <returns>The inverse result of what should be obtained on the passed entries if the <see cref="Convert"/> method was called.</returns>
+        /// <param name="culture">Culture used to parse operands and format string output; invariant culture is used when null.</param>
+        /// <returns>Binding.DoNothing for Modulo; otherwise the reverse result, as a string when targetType is string,
+        /// otherwise a double; or ValueForInvalid.</returns>
+        /// <remarks>Modulo has no unique reverse hence returns Binding.DoNothing.</remarks>
         /// <exception cref="NotSupportedException">Thrown if the math operation is not supported for convert back.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (Operation == MathOperation.Modulo)
+                return Binding.DoNothing;
+
             if(value == null)
                 return ValueForInvalid;
 
@@ -149,10 +146,6 @@ namespace EMA.ExtendedWPFConverters
                 case MathOperation.Multiply:
                     result = value1 / value2;
                     break;
-                case MathOperation.Modulo:
-                    if (((int)value1).InverseUnderModulo((int)value2, out int resultAsInt))
-                        result = (double)resultAsInt;
-                    break;
                 case MathOperation.Divide:
                     result = value1 * value2;
                     break;
@@ -164,7 +157,7 @@ namespace EMA.ExtendedWPFConverters
             }
 
             if (result != null)
-                return InputAsString ? result.Value.ToString(culture ?? CultureInfo.InvariantCulture) : (object)result;
+                return targetType == typeof(string) ? result.Value.ToString(culture ?? CultureInfo.InvariantCulture) : (object)result.Value;
             return ValueForInvalid;
         }
 

@@ -24,5 +24,24 @@ namespace EMA.ExtendedWPFConverters.Tests
             
             Assert.Equal(expected, result);
         }
+
+        [Theory]
+        [InlineData(Visibility.Collapsed)]
+        [InlineData(Visibility.Hidden)]
+        [InlineData(Visibility.Visible)]
+        public void NullInputArrayReturnsConfiguredInvalidVisibility(Visibility valueForInvalid)
+        {
+            var otherVisibility = valueForInvalid == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+            var converter = new NotNullOrEmptyStringToVisibilityConverterWithActivators
+            {
+                ValueForInvalid = valueForInvalid,
+                ValueForNullOrEmpty = otherVisibility,
+                ValueForNotNullOrEmpty = otherVisibility
+            };
+
+            Assert.Equal(valueForInvalid, converter.Convert(null, typeof(Visibility), null, null));
+            Assert.Equal(valueForInvalid, converter.Convert(new object[0], typeof(Visibility), null, null));
+            Assert.Equal(otherVisibility, converter.Convert(new object[] { "content" }, typeof(Visibility), null, null));
+        }
     }
 }

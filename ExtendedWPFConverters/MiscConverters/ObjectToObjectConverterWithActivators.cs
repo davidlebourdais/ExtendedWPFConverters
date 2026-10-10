@@ -13,8 +13,8 @@ namespace EMA.ExtendedWPFConverters
     public class ObjectToObjectConverterWithActivators : MarkupExtension, IMultiValueConverter
     {
         /// <summary>
-        /// Value to be applied when passed boolean activators are invalid (not that providing
-        /// no boolean is considered as a valid input).
+        /// Value returned when the input array is null or boolean activators are invalid.
+        /// Providing no activators is valid.
         /// </summary>
         public object ValueForInvalid { get; set; } = null;
 
@@ -34,6 +34,9 @@ namespace EMA.ExtendedWPFConverters
         /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
+            if (values == null)
+                return ValueForInvalid;
+
             switch (values.Length)
             {
                 case 0:

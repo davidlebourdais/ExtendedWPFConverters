@@ -16,8 +16,8 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="value">A string that is a direct representation of an alignment enum.</param>
         /// <param name="targetType">Unused.</param>
-        /// <param name="parameter">Optional function or a dictionary that contains function used for translation of the value in the 
-        /// current culture's language. See <see cref="StringTranslationHelper.CheckFetcherFormat(object, bool)"/> for more details.</param>
+        /// <param name="parameter">Optional one-way or bidirectional translation fetcher.
+        /// See <see cref="StringTranslationHelper.CheckFetcherFormat(object, bool)"/> for supported formats.</param>
         /// <param name="culture">Optionally used by parameter to retrieve the right translation for the given input.</param>
         /// <returns>The <see cref="VerticalAlignment"/> that matches the string entry.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -25,7 +25,7 @@ namespace EMA.ExtendedWPFConverters
             if (!(value is string asString))
                 return null;
             
-            if (StringTranslationHelper.CheckFetcherFormat(parameter, true))
+            if (StringTranslationHelper.CheckFetcherFormat(parameter, bidirectionalOnly: false))
                 if (StringTranslationHelper.TryTranslateValue(asString, parameter, culture, out var translated))
                     asString = translated;
                         
@@ -40,8 +40,8 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="value">The <see cref="VerticalAlignment"/> value to be converted back into string.</param>
         /// <param name="targetType">Unused.</param>
-        /// <param name="parameter">Optional function or a dictionary that contains function used for translation of the value in the 
-        /// current culture's language. See <see cref="StringTranslationHelper.CheckFetcherFormat(object, bool)"/> for more details.</param>
+        /// <param name="parameter">Optional bidirectional translation fetcher. A one-way fetcher cannot translate back and returns an empty string.
+        /// See <see cref="StringTranslationHelper.CheckFetcherFormat(object, bool)"/> for supported formats.</param>
         /// <param name="culture">Optionally used by parameter to retrieve the right translation for the given input.</param>
         /// <returns>A string value matching the <see cref="VerticalAlignment"/> entry.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

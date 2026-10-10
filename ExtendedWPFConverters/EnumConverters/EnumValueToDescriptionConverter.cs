@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows.Markup;
 
@@ -21,38 +20,34 @@ namespace EMA.ExtendedWPFConverters
         /// <param name="targetType">Unused.</param>
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
-        /// <returns>The <see cref="DescriptionAttribute.Description"/> of the value, or empty string if none is set.</returns>
+        /// <returns>The description or enum string representation when no description exists; null for non-enum input.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (!(value is Enum asEnumValue))
                 return null;
 
-            var descriptionAttribute = asEnumValue.GetType()
-                                                  .GetMembers(BindingFlags.Public | BindingFlags.Static)
-                                                  .Single(x => x.Name == asEnumValue.ToString())
-                                                  .GetCustomAttributes(true)
-                                                  .OfType<DescriptionAttribute>()
-                                                  .FirstOrDefault();
-
-            return descriptionAttribute?.Description ?? string.Empty;
+            return asEnumValue.ToDescriptionOrToString();
         }
         
         /// <summary>
-        /// Returns an <see cref="Enum"/> value that matching a passed description.
+        /// Returns an <see cref="Enum"/> value matching a description or enum string representation.
         /// </summary>
-        /// <param name="value">The string containing the enum value description.</param>
-        /// <param name="targetType">The target <see cref="Enum"/> type.</param>
+        /// <param name="value">A description, enum name, flag list or numeric representation.</param>
+        /// <param name="targetType">The target enum or nullable enum type.</param>
         /// <param name="parameter">Unused.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>The resulting enum value.</returns>
-        /// <exception cref="ArgumentException">Thrown if no <see cref="DescriptionAttribute.Description"/> matches passed string or
-        /// if does not exist on the target <see cref="Enum"/> type.</exception>
+        /// <exception cref="ArgumentException">Thrown if the target is not an enum type or the input cannot be resolved.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || targetType == null)
                 return null;
 
-            foreach (var member in targetType.GetMembers(BindingFlags.Public | BindingFlags.Static))
+            var enumType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+            if (!enumType.IsEnum)
+                throw new ArgumentException("The target type must be an enum or nullable enum.", nameof(targetType));
+
+            foreach (var member in enumType.GetFields(BindingFlags.Public | BindingFlags.Static))
             {
                 var descriptionAttribute = member.GetCustomAttributes(true)
                                                  .OfType<DescriptionAttribute>()
@@ -61,8 +56,24 @@ namespace EMA.ExtendedWPFConverters
                 if (descriptionAttribute == null)
                     continue;
                 
-                if (descriptionAttribute.Description.Equals(value))
-                    return Enum.Parse(targetType, member.Name);
+                if (Equals(descriptionAttribute.Description, value))
+                    return Enum.Parse(enumType, member.Name);
+            }
+
+            if (value is string enumText)
+            {
+                try
+                {
+                    return Enum.Parse(enumType, enumText);
+                }
+                catch (ArgumentException)
+                {
+                    // Neither a description nor an enum representation.
+                }
+                catch (OverflowException)
+                {
+                    // The numeric representation does not fit the enum's underlying type.
+                }
             }
 
             throw new ArgumentException($"Cannot convert back from description to enum value for string {value}");

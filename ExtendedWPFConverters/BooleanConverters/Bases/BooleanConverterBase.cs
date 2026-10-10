@@ -37,7 +37,7 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="value">A boolean entry.</param>
         /// <param name="targetType">Unused.</param>
-        /// <param name="parameter">An optional value for "true" output (overrides parameterized one named <see cref="ValueForTrue"/>).</param>
+        /// <param name="parameter">An optional value assignable to TResult that overrides <see cref="ValueForTrue"/>. Other parameter types are ignored.</param>
         /// <param name="culture">Unused.</param>
         /// <returns>A value corresponding to the boolean entry value once processed by the specified <see cref="BooleanConverterBase{TResult}.Operation"/>.</returns>
         /// <exception cref="NotSupportedException">Thrown if the boolean operation is not supported.</exception>
@@ -64,9 +64,9 @@ namespace EMA.ExtendedWPFConverters
         /// </summary>
         /// <param name="value">A <typeparamref name="TResult"/> entry.</param>
         /// <param name="targetType">Unused.</param>
-        /// <param name="parameter">Unused.</param>
+        /// <param name="parameter">An optional value assignable to TResult that overrides ValueForTrue when Operation is None.</param>
         /// <param name="culture">Unused.</param>
-        /// <returns>A boolean value that matches best the passed entry.</returns>
+        /// <returns>True when an entry of TResult equals the effective ValueForTrue (None) or ValueForFalse (Not), otherwise false.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value is TResult casted && casted.Equals(Operation == ReducedBooleanOperation.None ? (parameter is TResult ? parameter : ValueForTrue) : ValueForFalse);

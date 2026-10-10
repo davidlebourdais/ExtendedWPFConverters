@@ -2,7 +2,7 @@ using System.Globalization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using EMA.ExtendedWPFConverters.Utils;
+using System.Windows.Data;
 using EMA.ExtendedWPFConverters.Tests.Utils;
 
 namespace EMA.ExtendedWPFConverters.Tests.Data
@@ -81,19 +81,7 @@ namespace EMA.ExtendedWPFConverters.Tests.Data
                     result = value1 * value2;
                     break;
                 case MathOperation.Modulo:
-                {
-                    var asInt1 = Convert.ToInt32((int)value1);
-                    var asInt2 = Convert.ToInt32((int)value2);
-                    if (asInt1.InverseUnderModulo(asInt2, out int resultInt))
-                        result = Convert.ToDouble(resultInt);
-                    else
-                    {
-                        result = 0;
-                        return false;
-                    }
-
-                    break;
-                }
+                    throw new NotSupportedException("Modulo has no reverse operation.");
                 case MathOperation.Power when value2 == 0:
                     result = Math.Pow(value1, double.PositiveInfinity);
                     break;
@@ -180,10 +168,10 @@ namespace EMA.ExtendedWPFConverters.Tests.Data
                         foreach (var culture in Cultures)
                         {
                             // Precalculate result:
-                            var result = invalid;
+                            var result = operation == MathOperation.Modulo ? Binding.DoNothing : invalid;
                             var value1 = input[0];
                             var value2 = input[1];
-                            if (value1.IsNumeric() && (value2.IsNumeric() || IsSingleValueOperation(operation)))
+                            if (operation != MathOperation.Modulo && value1.IsNumeric() && (value2.IsNumeric() || IsSingleValueOperation(operation)))
                             {
                                 if (OperateBack(operation, Convert.ToDouble(value1), IsSingleValueOperation(operation) ? 0.0d : Convert.ToDouble(value2), out var asDouble))
                                     result = asDouble;                                        

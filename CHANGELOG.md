@@ -1,7 +1,7 @@
 # Changelog
 
 ## Next
-Fix some Collection based converters.
+Fix various converters.
 Add new converters:
 - BooleanToGridLengthConverter
 - BooleanToSolidColorBrushConverter

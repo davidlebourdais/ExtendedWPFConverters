@@ -24,8 +24,8 @@ namespace EMA.ExtendedWPFConverters
         public Visibility ValueForNullOrEmpty { get; set; } = Visibility.Collapsed;
         
         /// <summary>
-        /// Value to be applied when passed boolean activators are invalid (not that providing
-        /// no boolean is considered as a valid input).
+        /// Value returned when the input array is null or empty, or boolean activators are invalid.
+        /// Providing a string without activators is valid.
         /// </summary>
         public Visibility ValueForInvalid { get; set; } = Visibility.Collapsed;
 
@@ -49,7 +49,7 @@ namespace EMA.ExtendedWPFConverters
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             // There must be a first value:
-            if (values.Length < 1) return ValueForInvalid;
+            if (values == null || values.Length < 1) return ValueForInvalid;
 
             // Other values will be booleans that will activate or not the output regarding to
             // the boolean operation that is set:
