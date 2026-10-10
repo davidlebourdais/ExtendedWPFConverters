@@ -19,6 +19,18 @@ jobs:
   displayName: 'Build and test'
 
   steps:
+    - task: UseDotNet@2
+      displayName: 'Install .NET 8 SDK'
+      inputs:
+        packageType: sdk
+        version: '8.0.x'
+
+    - task: UseDotNet@2
+      displayName: 'Install .NET 10 SDK'
+      inputs:
+        packageType: sdk
+        version: '10.0.203'
+
     - task: DotNetCoreCLI@2
       displayName: 'Restore all'
       inputs:
@@ -38,9 +50,23 @@ jobs:
       inputs:  
         command: 'test'
         projects: '**/*.Tests/*.csproj'
-        arguments: '--configuration Release --no-build --collect "Code coverage"'
+        arguments: '--configuration Release --no-build'
         testRunTitle: 'Test all'
         publishTestResults: true
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Collect code coverage'
+      condition: succeeded()
+      inputs:
+        command: 'test'
+        projects: '**/*.Tests/*.csproj'
+        arguments: '--configuration Release --framework net10.0-windows --no-build --collect "XPlat Code Coverage" --results-directory "$(Agent.TempDirectory)"'
+        publishTestResults: false
+
+    - task: PublishCodeCoverageResults@2
+      displayName: 'Publish code coverage'
+      inputs:
+        summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
 
 - job: PublishArtifact
   displayName: 'Package creation'
@@ -60,7 +86,7 @@ jobs:
         targetType: 'inline'
         script: |
           Try {
-            $LastTag = git describe --tags
+            $LastTag = git describe --tags --abbrev=0
           }
           Catch { }
           Finally {
@@ -105,17 +131,19 @@ jobs:
       displayName: 'Create nightly build version tag'
       condition: not(variables['isReleaseTagBranch'])
       env:
-        CurrentBuildID: $(Build.BuildNumber) # date is expanded at the top and then put in BuildNumber
-        LastTag: $(lastOrCurrentVersionTag)
+        BuildId: $(Build.BuildId)
       inputs:
         targetType: 'inline'
         script: |
-          $LastTag = $env:LastTag.TrimStart('v')
-          $Suffix = $env:CurrentBuildID.Substring($env:CurrentBuildID.LastIndexOf('-'))
-          $NightlyBuildVersion = $LastTag + $Suffix
+          $ProjectVersion = Get-ChildItem -Path . -Include *.csproj -Exclude *.*Tests*.csproj -Recurse |
+                            Select-Xml -XPath "/Project/PropertyGroup/Version" |
+                            Select-Object -ExpandProperty Node |
+                            Select-Object -ExpandProperty InnerXml |
+                            Select-Object -First 1
+          $VersionBase = $ProjectVersion.Split('-')[0]
+          $NightlyBuildVersion = "$VersionBase-preview.$env:BuildId"
           Write-Host "##vso[task.setvariable variable=nightlyBuildVersion]$NightlyBuildVersion"
-          echo "Nightly build version is: $ProjectTag"
-        ignoreLASTEXITCODE: true
+          echo "Nightly build version is: $NightlyBuildVersion"
 
     - task: DotNetCoreCLI@2
       displayName: 'Pack nightly build'
@@ -159,16 +187,15 @@ jobs:
       displayName: 'Prepare files to archive'
       inputs:
         SourceFolder: '$(Build.SourcesDirectory)'
-        Contents: '**'
+        Contents: |
+          **
+          !.git/**
+          !.idea/**
+          !**/bin/**
+          !**/obj/**
         TargetFolder: '$(Agent.BuildDirectory)\ExtendedWPFVisualTreeHelper'
         CleanTargetFolder: true
         OverWrite: true
-
-    - task: DeleteFiles@1
-      displayName: 'Delete git history from archive'
-      inputs:
-        SourceFolder: '$(Agent.BuildDirectory)/ExtendedWPFVisualTreeHelper'
-        Contents: '.git'
 
     - task: ArchiveFiles@2
       displayName: 'Archive source as .zip'
